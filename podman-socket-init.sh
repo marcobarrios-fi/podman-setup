@@ -22,12 +22,12 @@ podman_socket_init() {
 
     # Verify that the user name is specified
     if test ! -n "${USER_NAME:-}"; then
-      echo "$(tput bold)$(tput setaf 1)Error: User name is not specified.$(tput sgr0)" && exit 1;
+      echo "$(tput bold)$(tput setaf 1)Error: Username configuration option (USER_NAME) is not specified.$(tput sgr0)" && exit 1;
     fi
 
-    # Verify that the user ID is specified
+    # Verify that the user identifier is specified
     if test ! -n "${USER_ID:-}"; then
-      echo "$(tput bold)$(tput setaf 1)Error: User ID is not specified.$(tput sgr0)" && exit 1;
+      echo "$(tput bold)$(tput setaf 1)Error: User identifier configuration option (USER_ID) is not specified.$(tput sgr0)" && exit 1;
     fi
 
     # Operating system
