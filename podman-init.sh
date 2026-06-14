@@ -103,27 +103,6 @@ podman_init() {
   echo "Deleting socket initialization script...";
   rm "$TEMP_SOCKET_INIT_SCRIPT";
 
-  ### Temporary Configuration Directory
-
-  # Create temporary configuration directory
-  echo "Creating temporary configuration directory...";
-  TEMP_CONFIG_DIR=$(mktemp --directory);
-
-  # Verify that the temporary configuration was successfully created
-  if test ! -d "$TEMP_CONFIG_DIR"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory could not be created.$(tput sgr0)" && exit 1;
-  fi
-
-  # Display temporary configuration directory
-  echo "Temporary configuration directory:"
-  echo "$(tput bold)$(tput setaf 4)$TEMP_CONFIG_DIR$(tput sgr0)";
-
-  # Download GitHub repository
-  echo "Downloading configuration files from GitHub repository...";
-  git clone "https://x-access-token:$GITHUB_REPO_TOKEN@github.com/$GITHUB_REPO.git" "$TEMP_CONFIG_DIR";
-
-  echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
-
   ### Secrets
 
   # Secrets initialization script
@@ -148,6 +127,27 @@ podman_init() {
   # Delete secrets initialization script
   echo "Deleting secrets initialization script...";
   rm "$TEMP_SECRETS_INIT_SCRIPT";
+
+  ### Temporary Configuration Directory
+
+  # Create temporary configuration directory
+  echo "Creating temporary configuration directory...";
+  TEMP_CONFIG_DIR=$(mktemp --directory);
+
+  # Verify that the temporary configuration was successfully created
+  if test ! -d "$TEMP_CONFIG_DIR"; then
+    echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory could not be created.$(tput sgr0)" && exit 1;
+  fi
+
+  # Display temporary configuration directory
+  echo "Temporary configuration directory:"
+  echo "$(tput bold)$(tput setaf 4)$TEMP_CONFIG_DIR$(tput sgr0)";
+
+  # Download GitHub repository
+  echo "Downloading configuration files from GitHub repository...";
+  git clone "https://x-access-token:$GITHUB_REPO_TOKEN@github.com/$GITHUB_REPO.git" "$TEMP_CONFIG_DIR";
+
+  echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
 
   ### Pods
 
