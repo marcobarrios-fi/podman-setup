@@ -67,13 +67,13 @@ podman_pod_init() {
   fi
 
   # Containers
-  CONTAINERS="$(cat $POD_CONTAINERS_CONFIG_FILE)";
+  CONTAINERS="$(cat "$POD_CONTAINERS_CONFIG_FILE")";
 
   # Prompt creating the pod
   printf "$(tput bold)Create $POD pod? (Yes/No) $(tput sgr0)" && read input;
 
   # Evaluate user input for creating the pod
-  if test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
+  if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
     
     # Pod initializing script
     POD_INIT_SCRIPT="$TEMP_CONFIG_DIR/podman/$POD-pod-init.sh";
@@ -92,7 +92,7 @@ podman_pod_init() {
       printf "$(tput bold)Remove existing $POD pod? (Yes/No) $(tput sgr0)" && read input;
       
       # Evaluate user input for removing existing pod
-      if test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
+      if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
         
         # Remove existing pod
         echo "Removing $POD pod...";
@@ -123,7 +123,7 @@ podman_pod_init() {
   fi
 
   # Scripts URL
-  SCRITPS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
+  SCRIPTS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
 
   # Containers initialization script
   CONTAINERS_INIT_SCRIPT='podman-containers-init.sh';
@@ -133,7 +133,7 @@ podman_pod_init() {
 
   # Download containers initialization script
   echo "Downloading containers initialization script...";
-  curl --fail --silent --output "$TEMP_CONTAINERS_INIT_SCRIPT" "$SCRITPS_URL/$CONTAINERS_INIT_SCRIPT";
+  curl --fail --silent --output "$TEMP_CONTAINERS_INIT_SCRIPT" "$SCRIPTS_URL/$CONTAINERS_INIT_SCRIPT";
 
   # Verify that the containers initialization script was successfully downloaded
   if test ! -f "$TEMP_CONTAINERS_INIT_SCRIPT"; then
