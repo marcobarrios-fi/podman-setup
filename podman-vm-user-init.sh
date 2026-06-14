@@ -2,7 +2,7 @@
 
 # Podman Virtual Machine User Initialization Shell Script
 # Copyright ©️ 2026 Marco Barrios. All rights reserved.
-# Creates an user without admin priviledges
+# Creates an user without admin privileges
 # podman-vm-user-init.sh
 
 # Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
@@ -52,14 +52,14 @@ podman_vm_user_init() {
     if test "$OPERATING_SYSTEM" = "alpine"; then
 
       # Create group if it does not already exist
-      if test $(getent group "GROUP_NAME"); then
+      if getent group "$GROUP_NAME" > /dev/null 2>&1; then
         echo "$(tput bold)$(tput setaf 3)Warning: Group $GROUP_NAME already exists.$(tput sgr0)";
       else 
         addgroup --gid "$GROUP_ID" "$GROUP_NAME";
       fi
 
       # Create user if it does not already exist
-      if test $(id -u "$USER_NAME"); then
+      if id -u "$USER_NAME" > /dev/null 2>&1; then
         echo "$(tput bold)$(tput setaf 3)Warning: User $USER_NAME already exists.$(tput sgr0)";
       else
         adduser --uid "$USER_ID" --ingroup "$GROUP_NAME" "$USER_NAME";
@@ -68,14 +68,14 @@ podman_vm_user_init() {
     elif test "$OPERATING_SYSTEM" = "ubuntu"; then
 
       # Create group if it does not already exist
-      if test $(getent group "$GROUP_NAME"); then
+      if getent group "$GROUP_NAME" > /dev/null 2>&1; then
         echo "$(tput bold)$(tput setaf 3)Warning: Group $GROUP_NAME already exists.$(tput sgr0)";
       else 
         groupadd --gid "$GROUP_ID" "$GROUP_NAME";
       fi
 
       # Create user if it does not already exist
-      if test $(id --user "$USER_NAME"); then
+      if id --user "$USER_NAME" > /dev/null 2>&1; then
         echo "$(tput bold)$(tput setaf 3)Warning: User $USER_NAME already exists.$(tput sgr0)";
       else
         useradd --uid "$USER_ID" --gid "$GROUP_NAME" --shell '/bin/bash' "$USER_NAME";
