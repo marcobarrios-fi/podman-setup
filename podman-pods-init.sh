@@ -58,23 +58,30 @@ podman_pod_init() {
     echo "$(tput bold)$(tput setaf 1)Error: Pod is not specified.$(tput sgr0)" && exit 1;
   fi
 
-  # Pod configuration file
-  # (a configuration file containing space-separated list of pod containers)
-  POD_CONFIG_FILE="$TEMP_CONFIG_DIR/podman/$POD-pod.conf";
+  # Pod containers configuration file (a configuration file containing space-separated list of pod containers)
+  POD_CONTAINERS_CONFIG_FILE="$TEMP_CONFIG_DIR/podman/$POD-pod-containers.conf";
 
-  # Verify that the pod configuration file exists
-  if test ! -f "$POD_CONFIG_FILE"; then
-    echo "$(tput bold)$(tput setaf 1)Error: $POD pod configuration file does not exist.$(tput sgr0)" && exit 1;
+  # Verify that the pod containers configuration file exists
+  if test ! -f "$POD_CONTAINERS_CONFIG_FILE"; then
+    echo "$(tput bold)$(tput setaf 1)Error: $POD pod containers configuration file does not exist.$(tput sgr0)" && exit 1;
   fi
 
   # Containers
-  CONTAINERS="$(cat $POD_CONFIG_FILE)";
+  CONTAINERS="$(cat $POD_CONTAINERS_CONFIG_FILE)";
 
   # Prompt creating the pod
   printf "$(tput bold)Create $POD pod? (Yes/No) $(tput sgr0)" && read input;
 
   # Evaluate user input for creating the pod
   if test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
+    
+    # Pod initializing script
+    POD_INIT_SCRIPT="$TEMP_CONFIG_DIR/podman/$POD-pod-init.sh";
+    
+    # Verify that the pod initializing script exists
+    if test ! -f "$POD_INIT_SCRIPT"; then
+      echo "$(tput bold)$(tput setaf 1)Error: $POD pod initialization script does not exist.$(tput sgr0)" && exit 1;
+    fi
     
     # Evaluate whether the pod exists
     if podman pod exists "$DOMAIN-$POD"; then
@@ -94,8 +101,10 @@ podman_pod_init() {
         # Create the pod
         echo "Creating $POD pod...";
         
-        # Create pod with host networking
-        podman pod create --name "$DOMAIN-$POD" --network='host';
+        # Execute the pod initialization script (passes the domain and pod as environment variables to the script)
+        env DOMAIN="$DOMAIN" \
+          POD="$DOMAIN-$POD" \
+          sh "$POD_INIT_SCRIPT";
 
       fi
 
@@ -104,8 +113,10 @@ podman_pod_init() {
       # Create the pod
       echo "Creating $POD pod...";
       
-      # Create pod with host networking
-      podman pod create --name "$DOMAIN-$POD" --network='host';
+      # Execute the pod initialization script (passes the domain and pod as environment variables to the script)
+      env DOMAIN="$DOMAIN" \
+        POD="$DOMAIN-$POD" \
+        sh "$POD_INIT_SCRIPT";
     
     fi
 
