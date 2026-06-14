@@ -2,7 +2,7 @@
 
 # Podman Virtual Machine Rootless Initialization Shell Script
 # Copyright ©️ 2025-2026 Marco Barrios. All rights reserved.
-# Initalizes rootless Podman environment by assigning subordinate user and group IDs to the specified user and allowing non-root users to bind to unprivileged ports
+# Initializes rootless Podman environment by assigning subordinate user and group IDs to the specified user and allowing non-root users to bind to unprivileged ports
 # Usage: chmod +x podman-vm-rootless-init.sh && sh podman-vm-rootless-init.sh;
 
 # Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
