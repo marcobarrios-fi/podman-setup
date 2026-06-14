@@ -2,7 +2,7 @@
 
 # Podman Virtual Machine Packages Initialization Shell Script
 # Copyright ©️ 2026 Marco Barrios. All rights reserved.
-# Intalls requires packages on the virtual machine
+# Installs requires packages on the virtual machine
 # podman-vm-packages-init.sh
 
 # Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
