@@ -20,19 +20,19 @@ podman_vm_host_init() {
 
     # Verify configuration
 
-    # Verify that domain is specified
+    # Verify that the domain is specified
     if test ! -n "${DOMAIN:-}"; then
-      echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
+      echo "$(tput bold)$(tput setaf 1)Error: Domain configuration option (DOMAIN) is not specified.$(tput sgr0)" && exit 1;
     fi
 
     # Verify that the hostname is specified
     if test ! -n "${HOST_NAME:-}"; then
-      echo "$(tput bold)$(tput setaf 1)Error: Hostname is not specified.$(tput sgr0)" && exit 1;
+      echo "$(tput bold)$(tput setaf 1)Error: Hostname configuration option (HOST_NAME) is not specified.$(tput sgr0)" && exit 1;
     fi
 
-    # Verify that the host fully qualified domain name is specified
+    # Verify that the host fully qualified domain name (FQDN) is specified
     if test ! -n "${HOST_DOMAIN_NAME:-}"; then
-      echo "$(tput bold)$(tput setaf 1)Error: Host fully qualified domain name is not specified.$(tput sgr0)" && exit 1;
+      echo "$(tput bold)$(tput setaf 1)Error: Host fully qualified domain name (FQDN) configuration option (HOST_DOMAIN_NAME) is not specified.$(tput sgr0)" && exit 1;
     fi
 
     # Set hostname
