@@ -15,12 +15,12 @@ podman_image_init() {
   # Verify configuration
 
   # Verify that the domain is specified
-  if test ! -n "$DOMAIN"; then
+  if test ! -n "${DOMAIN:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the temporary configuration directory is specified
-  if test ! -n "$TEMP_CONFIG_DIR"; then
+  if test ! -n "${TEMP_CONFIG_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -33,7 +33,7 @@ podman_image_init() {
   CONTAINER="$1";
 
   # Verify that the container is specified
-  if test ! -n "$CONTAINER"; then
+  if test ! -n "${CONTAINER:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Container is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -65,12 +65,12 @@ podman_container_init() {
   # Verify configuration
 
   # Verify that the domain is specified
-  if test ! -n "$DOMAIN"; then
+  if test ! -n "${DOMAIN:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory is specified
-  if test ! -n "$HOST_DATA_DIR"; then
+  if test ! -n "${HOST_DATA_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -80,7 +80,7 @@ podman_container_init() {
   fi
 
   # Verify that the temporary configuration directory is specified
-  if test ! -n "$TEMP_CONFIG_DIR"; then
+  if test ! -n "${TEMP_CONFIG_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -93,7 +93,7 @@ podman_container_init() {
   CONTAINER="$1";
 
   # Verify that the container is specified
-  if test ! -n "$CONTAINER"; then
+  if test ! -n "${CONTAINER:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Container is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -140,7 +140,7 @@ podman_containers_init() {
     echo "Initializing Podman containers...";
 
     # Verify that the temporary configuration directory is specified
-    if test ! -n "$TEMP_CONFIG_DIR"; then
+    if test ! -n "${TEMP_CONFIG_DIR:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory is not specified.$(tput sgr0)" && exit 1;
     fi
 
@@ -150,7 +150,7 @@ podman_containers_init() {
     fi
 
     # Verify that the host data directory is specified
-    if test ! -n "$HOST_DATA_DIR"; then
+    if test ! -n "${HOST_DATA_DIR:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
     fi
 
@@ -160,7 +160,7 @@ podman_containers_init() {
     fi
 
     # Verify that the domain is specified
-    if test ! -n "$DOMAIN"; then
+    if test ! -n "${DOMAIN:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
     fi
 
