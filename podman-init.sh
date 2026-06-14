@@ -1,8 +1,9 @@
 #!/bin/sh
 
-# Podman Initialization Shell Script
+# Podman Remote Initialization Shell Script
 # Copyright ©️ 2025-2026 Marco Barrios. All rights reserved.
-# Usage: chmod +x podman-init.sh && sh podman-init.sh <configuration file path>;
+# Linux Usage: curl --location --output '/usr/bin/podman-init' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-remote-init.sh' && sudo chmod +x '/usr/bin/podman-init' && podman-init <configuration file URL> <configuration file access token>
+# Mac Usage: curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-remote-init.sh' && sh 'podman-init.sh' <configuration file URL> <configuration file access token>
 
 # Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
 set -eu;
@@ -11,55 +12,77 @@ podman_init() {
 
   echo "Initializing Podman...";
 
-  # Configuration file
-  # If configuration file path is provided as an argument
-  if test "$#" -eq 1; then
-    # User-provided configuration file
-    CONFIG_FILE="$1";
-  else
-    # Default configuration file
-    CONFIG_FILE='/etc/profile.d/podman-vm-init.sh';
+  # The function expects two arguments; the configuration file URL and the configuration file access token
+
+  # Verify that the configuration file URL argument was provided
+  if test "$#" -lt 1; then
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration file URL argument was not provided.$(tput sgr0)";
+    echo "Usage: $(tput bold)sudo vm-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
   fi
 
-  # Verify that the configuration file exists
+  # Verify that the configuration file access token argument was provided
+  if test "$#" -lt 2; then
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration file access token argument was not provided.$(tput sgr0)";
+    echo "Usage: $(tput bold)sudo vm-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
+  fi
+
+  # Configuration file URL
+  CONFIG_FILE_URL="$1";
+
+  # Configuration file access token
+  CONFIG_FILE_TOKEN="$2";
+
+  # Configuration file
+  CONFIG_FILE="$(mktemp)";
+
+  # Download configuration file
+  echo "Downloading configuration file...";
+  curl --fail --location --silent --header "Authorization: Bearer $CONFIG_FILE_TOKEN" --output "$CONFIG_FILE" "$CONFIG_FILE_URL";  
+ 
+  # Verify that the configuration file was successfully downloaded
   if test ! -f "$CONFIG_FILE"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Configuration file does not exist.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration file could not be downloaded.$(tput sgr0)" && exit 1;
   fi
 
   # Source configuration file
+  echo "Loading configuration file...";
   . "$CONFIG_FILE";
+
+  # Delete configuration file
+  echo "Deleting configuration file...";
+  rm "$CONFIG_FILE";
 
   # Verify configuration
 
   # Verify that the domain is specified
   if test ! -n "${DOMAIN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Domain configuration option (DOMAIN) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory is specified
   if test ! -n "${HOST_DATA_DIR:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Host data directory configuration option (HOST_DATA_DIR) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the user name is specified
   if test ! -n "${USER_NAME:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: User name is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Username configuration option (USER_NAME) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the GitHub repository is specified
   if test ! -n "${GITHUB_REPO:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository configuration option (GITHUB_REPO) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the GitHub repository access token is specified
   if test ! -n "${GITHUB_REPO_TOKEN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token configuration option (GITHUB_REPO_TOKEN) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Pods, containers, and secrets are optional
 
   ### Temporary Scripts Directory
-  # Note: the non-root user does not have access to the temporary scripts directory created by the root user
+  # Note: the non-root user does not have access to a temporary scripts directory created by the root user
 
   # Create temporary scripts directory
   echo "Creating temporary scripts directory...";
