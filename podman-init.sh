@@ -2,7 +2,7 @@
 
 # Podman Initialization Shell Script
 # Copyright ©️ 2025-2026 Marco Barrios. All rights reserved.
-# Linux Usage: curl --location --output '/usr/bin/podman-init' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sudo chmod +x '/usr/bin/podman-init' && podman-init <configuration file URL> <configuration file access token>
+# Linux Usage: sudo curl --location --output '/usr/bin/podman-init' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sudo chmod +x '/usr/bin/podman-init' && podman-init <configuration file URL> <configuration file access token>
 # Mac Usage: curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sh 'podman-init.sh' <configuration file URL> <configuration file access token>
 
 # Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
