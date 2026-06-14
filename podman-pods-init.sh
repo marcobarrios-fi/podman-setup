@@ -17,12 +17,12 @@ podman_pod_init() {
 
   # Verify that the domain is specified
   if test ! -n "${DOMAIN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Domain configuration option (DOMAIN) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory is specified
   if test ! -n "${HOST_DATA_DIR:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Host data directory configuration option (HOST_DATA_DIR) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory exists
