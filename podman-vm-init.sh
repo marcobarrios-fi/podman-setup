@@ -20,15 +20,17 @@ podman_vm_init() {
     echo "$(tput bold)$(tput setaf 1)Error: Unsupported operating system.$(tput sgr0)" && exit 1;
   fi
 
-  # Verify that the configuration file URL is specified
+  # The function expects two arguments; the configuration file URL and the configuration file access token
+
+  # Verify that the configuration file URL argument was provided
   if test "$#" -lt 1; then
-    echo "$(tput bold)$(tput setaf 1)Error: Configuration file URL is not specified.$(tput sgr0)";
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration file URL argument was not provided.$(tput sgr0)";
     echo "Usage: $(tput bold)sudo vm-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
   fi
 
-  # Verify that the configuration file access token is specified
+  # Verify that the configuration file access token argument was provided
   if test "$#" -lt 2; then
-    echo "$(tput bold)$(tput setaf 1)Error: Configuration file access token is not specified.$(tput sgr0)";
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration file access token argument was not provided.$(tput sgr0)";
     echo "Usage: $(tput bold)sudo vm-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
   fi
 
@@ -39,7 +41,7 @@ podman_vm_init() {
   CONFIG_FILE_TOKEN="$2";
 
   # Configuration file
-  CONFIG_FILE='/etc/profile.d/podman-vm-init.sh';
+  CONFIG_FILE="$(mktemp)";
 
   # Download configuration file
   echo "Downloading configuration file...";
@@ -50,58 +52,59 @@ podman_vm_init() {
     echo "$(tput bold)$(tput setaf 1)Error: Configuration file could not be downloaded.$(tput sgr0)" && exit 1;
   fi
 
-  # Set configuration permissions
-  echo "Setting configuration permissions...";
-  chmod 644 "$CONFIG_FILE";
-
   # Source configuration file
+  echo "Loading configuration file...";
   . "$CONFIG_FILE";
+
+  # Delete configuration file
+  echo "Deleting configuration file...";
+  rm "$CONFIG_FILE";
 
   # Verify configuration
 
-  # Verify that domain is specified
+  # Verify that the domain is specified
   if test ! -n "${DOMAIN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Domain configuration option (DOMAIN) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the hostname is specified
   if test ! -n "${HOST_NAME:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Hostname is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Hostname configuration option (HOSTNAME) is not specified.$(tput sgr0)" && exit 1;
   fi
 
-  # Verify that the host fully qualified domain name is specified
+  # Verify that the host fully qualified domain name (FQDN) is specified
   if test ! -n "${HOST_DOMAIN_NAME:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Host fully qualified domain name is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Host fully qualified domain name (FQDN) configuration option (HOST_DOMAIN_NAME) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory is specified
   if test ! -n "${HOST_DATA_DIR:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Host data directory configuration option (HOST_DATA_DIR) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the username is specified
   if test ! -n "${USER_NAME:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Username is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Username configuration option (USER_NAME) is not specified.$(tput sgr0)" && exit 1;
   fi
 
-  # Verify that the user ID is specified
+  # Verify that the user identifier is specified
   if test ! -n "${USER_ID:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: User ID is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: User identifier configuration option (USER_ID) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the user public SSH key is specified
   if test ! -n "${USER_KEY:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: User public SSH key is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: User public SSH key configuration option (USER_KEY) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the GitHub repository is specified
   if test ! -n "${GITHUB_REPO:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository configuration option (GITHUB_REPO) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the GitHub repository access token is specified
   if test ! -n "${GITHUB_REPO_TOKEN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token configuration option (GITHUB_REPO_TOKEN) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Pods, containers, and secrets are optional
@@ -272,7 +275,7 @@ podman_vm_init() {
 
   echo "$(tput bold)$(tput setaf 2)Virtual machine initialization completed.$(tput sgr0)";
 
-  echo "Execute $(tput bold)podman-init$(tput sgr0) to initialize Podman.";
+  echo "Execute $(tput bold)podman-init $CONFIG_FILE_URL $CONFIG_FILE_TOKEN (tput sgr0) to initialize Podman.";
 
   # Switch to rootless user
   echo "Switching to rootless user...";
