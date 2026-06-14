@@ -60,47 +60,47 @@ podman_vm_init() {
   # Verify configuration
 
   # Verify that domain is specified
-  if test ! -n "$DOMAIN"; then
+  if test ! -n "${DOMAIN:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the hostname is specified
-  if test ! -n "$HOST_NAME"; then
+  if test ! -n "${HOST_NAME:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Hostname is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host fully qualified domain name is specified
-  if test ! -n "$HOST_DOMAIN_NAME"; then
+  if test ! -n "${HOST_DOMAIN_NAME:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Host fully qualified domain name is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory is specified
-  if test ! -n "$HOST_DATA_DIR"; then
+  if test ! -n "${HOST_DATA_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the username is specified
-  if test ! -n "$USER_NAME"; then
+  if test ! -n "${USER_NAME:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Username is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the user ID is specified
-  if test ! -n "$USER_ID"; then
+  if test ! -n "${USER_ID:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: User ID is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the user public SSH key is specified
-  if test ! -n "$USER_KEY"; then
+  if test ! -n "${USER_KEY:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: User public SSH key is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the GitHub repository is specified
-  if test ! -n "$GITHUB_REPO"; then
+  if test ! -n "${GITHUB_REPO:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: GitHub repository is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the GitHub repository access token is specified
-  if test ! -n "$GITHUB_REPO_TOKEN"; then
+  if test ! -n "${GITHUB_REPO_TOKEN:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token is not specified.$(tput sgr0)" && exit 1;
   fi
 
