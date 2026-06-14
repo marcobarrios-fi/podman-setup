@@ -21,7 +21,7 @@ podman_vm_rootless_init() {
     # Verify configuration
 
     # Verify that the user name is specified
-    if test ! -n "$USER_NAME"; then
+    if test ! -n "${USER_NAME:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: User name is not specified.$(tput sgr0)" && exit 1;
     fi
 
