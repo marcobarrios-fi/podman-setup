@@ -16,12 +16,12 @@ podman_image_init() {
 
   # Verify that the domain is specified
   if test ! -n "${DOMAIN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Domain configuration option (DOMAIN) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the temporary configuration directory is specified
   if test ! -n "${TEMP_CONFIG_DIR:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory is not specified.$(tput sgr0)" && exit 1;
+    echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory configuration option (TEMP_CONFIG_DIR) is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the temporary configuration directory exists
