@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# Podman Remote Initialization Shell Script
+# Podman Initialization Shell Script
 # Copyright ©️ 2025-2026 Marco Barrios. All rights reserved.
-# Linux Usage: curl --location --output '/usr/bin/podman-init' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-remote-init.sh' && sudo chmod +x '/usr/bin/podman-init' && podman-init <configuration file URL> <configuration file access token>
-# Mac Usage: curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-remote-init.sh' && sh 'podman-init.sh' <configuration file URL> <configuration file access token>
+# Linux Usage: curl --location --output '/usr/bin/podman-init' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sudo chmod +x '/usr/bin/podman-init' && podman-init <configuration file URL> <configuration file access token>
+# Mac Usage: curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sh 'podman-init.sh' <configuration file URL> <configuration file access token>
 
 # Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
 set -eu;
@@ -17,13 +17,13 @@ podman_init() {
   # Verify that the configuration file URL argument was provided
   if test "$#" -lt 1; then
     echo "$(tput bold)$(tput setaf 1)Error: Configuration file URL argument was not provided.$(tput sgr0)";
-    echo "Usage: $(tput bold)sudo vm-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
+    echo "Usage: $(tput bold)podman-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the configuration file access token argument was provided
   if test "$#" -lt 2; then
     echo "$(tput bold)$(tput setaf 1)Error: Configuration file access token argument was not provided.$(tput sgr0)";
-    echo "Usage: $(tput bold)sudo vm-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
+    echo "Usage: $(tput bold)podman-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
   fi
 
   # Configuration file URL
