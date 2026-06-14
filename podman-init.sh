@@ -75,7 +75,7 @@ podman_init() {
   echo "$(tput bold)$(tput setaf 4)$TEMP_SCRIPTS_DIR$(tput sgr0)";
 
   # Scripts URL
-  SCRITPS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
+  SCRIPTS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
 
   ### Socket
 
@@ -87,7 +87,7 @@ podman_init() {
 
   # Download socket initialization script
   echo "Downloading socket initialization script...";
-  curl --fail --location --silent --output "$TEMP_SOCKET_INIT_SCRIPT" "$SCRITPS_URL/$SOCKET_INIT_SCRIPT";
+  curl --fail --location --silent --output "$TEMP_SOCKET_INIT_SCRIPT" "$SCRIPTS_URL/$SOCKET_INIT_SCRIPT";
 
   # Verify that the socket initialization script was successfully downloaded
   if test ! -f "$TEMP_SOCKET_INIT_SCRIPT"; then
@@ -113,7 +113,7 @@ podman_init() {
 
   # Download secrets initialization script
   echo "Downloading secrets initialization script...";
-  curl --fail --location --silent --output "$TEMP_SECRETS_INIT_SCRIPT" "$SCRITPS_URL/$SECRETS_INIT_SCRIPT";
+  curl --fail --location --silent --output "$TEMP_SECRETS_INIT_SCRIPT" "$SCRIPTS_URL/$SECRETS_INIT_SCRIPT";
 
   # Verify that the secrets initialization script was successfully downloaded
   if test ! -f "$TEMP_SECRETS_INIT_SCRIPT"; then
@@ -159,7 +159,7 @@ podman_init() {
 
   # Download pods initialization script
   echo "Downloading pods initialization script...";
-  curl --fail --silent --output "$TEMP_PODS_INIT_SCRIPT" "$SCRITPS_URL/$PODS_INIT_SCRIPT";
+  curl --fail --silent --output "$TEMP_PODS_INIT_SCRIPT" "$SCRIPTS_URL/$PODS_INIT_SCRIPT";
 
   # Verify that the pods initialization script was successfully downloaded
   if test ! -f "$TEMP_PODS_INIT_SCRIPT"; then
@@ -188,7 +188,7 @@ podman_init() {
 
   # Download containers initialization script
   echo "Downloading containers initialization script...";
-  curl --fail --silent --output "$TEMP_CONTAINERS_INIT_SCRIPT" "$SCRITPS_URL/$CONTAINERS_INIT_SCRIPT";
+  curl --fail --silent --output "$TEMP_CONTAINERS_INIT_SCRIPT" "$SCRIPTS_URL/$CONTAINERS_INIT_SCRIPT";
 
   # Verify that the containers initialization script was successfully downloaded
   if test ! -f "$TEMP_CONTAINERS_INIT_SCRIPT"; then
