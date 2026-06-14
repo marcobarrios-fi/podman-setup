@@ -137,7 +137,7 @@ podman_vm_init() {
   echo "$(tput bold)$(tput setaf 4)$TEMP_SCRIPTS_DIR$(tput sgr0)";
 
   # Scripts URL
-  SCRITPS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
+  SCRIPTS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
 
   ### Hostname and Host Domain Name
 
@@ -149,7 +149,7 @@ podman_vm_init() {
 
   # Download host initialization script
   echo "Downloading host initialization script...";
-  curl --fail --location --silent --output "$TEMP_HOST_INIT_SCRIPT" "$SCRITPS_URL/$HOST_INIT_SCRIPT";
+  curl --fail --location --silent --output "$TEMP_HOST_INIT_SCRIPT" "$SCRIPTS_URL/$HOST_INIT_SCRIPT";
 
   # Verify that the host initialization script was successfully downloaded
   if test ! -f "$TEMP_HOST_INIT_SCRIPT"; then
@@ -176,7 +176,7 @@ podman_vm_init() {
 
   # Download packages initialization script
   echo "Downloading packages initialization script...";
-  curl --fail --location --silent --output "$TEMP_PACKAGES_INIT_SCRIPT" "$SCRITPS_URL/$PACKAGES_INIT_SCRIPT";
+  curl --fail --location --silent --output "$TEMP_PACKAGES_INIT_SCRIPT" "$SCRIPTS_URL/$PACKAGES_INIT_SCRIPT";
 
   # Verify that the packages initialization script was successfully downloaded
   if test ! -f "$TEMP_PACKAGES_INIT_SCRIPT"; then
@@ -200,7 +200,7 @@ podman_vm_init() {
 
   # Download user initialization script
   echo "Downloading user initialization script...";
-  curl --fail --location --silent --output "$TEMP_USER_INIT_SCRIPT" "$SCRITPS_URL/$USER_INIT_SCRIPT";
+  curl --fail --location --silent --output "$TEMP_USER_INIT_SCRIPT" "$SCRIPTS_URL/$USER_INIT_SCRIPT";
 
   # Verify that the user initialization script was successfully downloaded
   if test ! -f "$TEMP_USER_INIT_SCRIPT"; then
@@ -227,7 +227,7 @@ podman_vm_init() {
 
   # Download rootless initialization script
   echo "Downloading rootless initialization script...";
-  curl --fail --location --silent --output "$TEMP_ROOTLESS_INIT_SCRIPT" "$SCRITPS_URL/$ROOTLESS_INIT_SCRIPT";
+  curl --fail --location --silent --output "$TEMP_ROOTLESS_INIT_SCRIPT" "$SCRIPTS_URL/$ROOTLESS_INIT_SCRIPT";
 
   # Verify that the rootless initialization was successfully downloaded
   if test ! -f "$TEMP_ROOTLESS_INIT_SCRIPT"; then
