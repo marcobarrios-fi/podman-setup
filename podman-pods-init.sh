@@ -102,9 +102,7 @@ podman_pod_init() {
         echo "Creating $POD pod...";
         
         # Execute the pod initialization script (passes the domain and pod as environment variables to the script)
-        env DOMAIN="$DOMAIN" \
-          POD="$DOMAIN-$POD" \
-          sh "$POD_INIT_SCRIPT";
+        env DOMAIN="$DOMAIN" POD="$POD" sh "$POD_INIT_SCRIPT";
 
       fi
 
@@ -114,9 +112,7 @@ podman_pod_init() {
       echo "Creating $POD pod...";
       
       # Execute the pod initialization script (passes the domain and pod as environment variables to the script)
-      env DOMAIN="$DOMAIN" \
-        POD="$DOMAIN-$POD" \
-        sh "$POD_INIT_SCRIPT";
+      env DOMAIN="$DOMAIN" POD="$POD" sh "$POD_INIT_SCRIPT";
     
     fi
 
