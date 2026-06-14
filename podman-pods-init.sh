@@ -16,12 +16,12 @@ podman_pod_init() {
   # Verify configuration
 
   # Verify that the domain is specified
-  if test ! -n "$DOMAIN"; then
+  if test ! -n "${DOMAIN:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
   fi
 
   # Verify that the host data directory is specified
-  if test ! -n "$HOST_DATA_DIR"; then
+  if test ! -n "${HOST_DATA_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -31,7 +31,7 @@ podman_pod_init() {
   fi
 
   # Verify that the temporary scripts directory is specified
-  if test ! -n "$TEMP_SCRIPTS_DIR"; then
+  if test ! -n "${TEMP_SCRIPTS_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Temporary scripts directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -41,7 +41,7 @@ podman_pod_init() {
   fi
 
   # Verify that the temporary configuration directory is specified
-  if test ! -n "$TEMP_CONFIG_DIR"; then
+  if test ! -n "${TEMP_CONFIG_DIR:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -54,7 +54,7 @@ podman_pod_init() {
   POD="$1";
 
   # Verify that pod is specified
-  if test ! -n "$POD"; then
+  if test ! -n "${POD:-}"; then
     echo "$(tput bold)$(tput setaf 1)Error: Pod is not specified.$(tput sgr0)" && exit 1;
   fi
 
@@ -169,12 +169,12 @@ podman_pods_init() {
     # Verify configuration
 
     # Verify that the domain is specified
-    if test ! -n "$DOMAIN"; then
+    if test ! -n "${DOMAIN:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Domain is not specified.$(tput sgr0)" && exit 1;
     fi
 
     # Verify that the host data directory is specified
-    if test ! -n "$HOST_DATA_DIR"; then
+    if test ! -n "${HOST_DATA_DIR:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Host data directory is not specified.$(tput sgr0)" && exit 1;
     fi
 
@@ -184,7 +184,7 @@ podman_pods_init() {
     fi
 
      # Verify that the temporary scripts directory is specified
-    if test ! -n "$TEMP_SCRIPTS_DIR"; then
+    if test ! -n "${TEMP_SCRIPTS_DIR:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Temporary scripts directory is not specified.$(tput sgr0)" && exit 1;
     fi
 
@@ -194,7 +194,7 @@ podman_pods_init() {
     fi
 
     # Verify that the temporary configuration directory is specified
-    if test ! -n "$TEMP_CONFIG_DIR"; then
+    if test ! -n "${TEMP_CONFIG_DIR:-}"; then
       echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory is not specified.$(tput sgr0)" && exit 1;
     fi
 
