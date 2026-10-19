@@ -69,10 +69,10 @@ podman_pod_init() {
   # Containers
   CONTAINERS="$(cat "$POD_CONTAINERS_CONFIG_FILE")";
 
-  # Prompt creating the pod
-  printf "$(tput bold)Create $POD pod? (Yes/No) $(tput sgr0)" && read input;
+  # Prompt creating or modifying the pod
+  printf "$(tput bold)Create or modify $POD pod? (Yes/No) $(tput sgr0)" && read input;
 
-  # Evaluate user input for creating the pod
+  # Evaluate user input for creating or modifying the pod
   if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
     
     # Pod initializing script
