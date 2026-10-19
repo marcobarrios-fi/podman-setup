@@ -172,7 +172,7 @@ podman_containers_init() {
       # Evaluate user input for initializing the container
       if test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
         
-        # Initalize (build) image
+        # Initialize (build) image
         podman_image_init "$CONTAINER";
 
         # Initialize (create) container
