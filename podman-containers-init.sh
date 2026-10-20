@@ -52,7 +52,7 @@ podman_image_init() {
 
   # Build container image
   echo "Building $CONTAINER container image...";
-  podman build --no-cache --tag "$IMAGE" --build-arg-file "$TEMP_CONFIG_DIR/$CONTAINER/$CONTAINER.conf" --file "$TEMP_CONFIG_DIR/$CONTAINER/$CONTAINER.image";
+  podman build --no-cache --tag "$IMAGE" --build-arg-file "$TEMP_CONFIG_DIR/$CONTAINER/$CONTAINER-image.conf" --file "$TEMP_CONFIG_DIR/$CONTAINER/$CONTAINER.image";
   echo "$(tput bold)$(tput setaf 2)Building $CONTAINER container image completed.$(tput sgr0)";
 
 }
