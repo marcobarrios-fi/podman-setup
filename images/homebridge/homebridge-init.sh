@@ -25,11 +25,11 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/config.json'; then
+if test -f '/tmp/config-template.json'; then
   # Create configuration file from the configuration template
-  envsubst < '/tmp/config.json' > "$DATA_DIR/config.json";
+  envsubst < '/tmp/config-template.json' > "$DATA_DIR/config.json";
   # Delete configuration template
-  rm '/tmp/config.json';
+  rm '/tmp/config-template.json';
 fi 
 
 # Start Homebridge and Homebridge Config UI X
