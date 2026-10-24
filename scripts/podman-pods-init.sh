@@ -26,7 +26,7 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
 
   PODS_DIR="$CONFIG_DIR/podman/pods";
 
-  echo "Pods directory: $PODS_DIR";
+  echo "Pods directory:" && echo "$PODS_DIR";
 
   # Verify that the pods directory exists
   if test ! -d "$PODS_DIR"; then
