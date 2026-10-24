@@ -33,6 +33,10 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
     echo "$(tput bold)$(tput setaf 1)Error: Pods configuration directory does not exist.$(tput sgr0)" && exit 1;
   fi
 
+  # Change to the pods directory
+  echo 'Changing to pods directory...';
+  cd "$PODS_DIR";
+
   # Assign pods as positional arguments
   set -- "$PODS_DIR/"*.yaml;
 
