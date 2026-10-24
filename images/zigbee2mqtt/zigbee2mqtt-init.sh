@@ -24,11 +24,11 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/config.yaml'; then
+if test -f '/tmp/config-template.yaml'; then
   # Create configuration file from the configuration template
-  envsubst < '/tmp/config.yaml' > "$CONFIG_FILE";
+  envsubst < '/tmp/config-template.yaml' > "$CONFIG_FILE";
   # Delete configuration template
-  rm '/tmp/config.yaml';
+  rm '/tmp/config-template.yaml';
 fi
 
 # Start Zigbee2MQTT
