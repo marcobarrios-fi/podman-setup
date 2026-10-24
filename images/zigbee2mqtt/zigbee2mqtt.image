@@ -121,7 +121,7 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 ENV DATA="$DATA_DIR"
 
 # Copy configuration template to the temporary directory
-COPY 'zigbee2mqtt-config.yaml' '/tmp/config.yaml'
+COPY 'zigbee2mqtt-config-template.yaml' '/tmp/config-template.yaml'
 
 ### Secrets
 
