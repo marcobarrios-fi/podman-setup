@@ -78,21 +78,24 @@ echo "$(tput sgr0)";
 
 echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
 
-# Link source files to the configuration directory
-for image_dir in "$CONFIG_DIR/images/"*/; do
-  if test -d "$image_dir"; then
-    image_name=$(basename "$image_dir");
+# Copy image source files to the configuration directory
+# (Podman builds a local image from a directory named after the image)
 
-    ln -s "$CONFIG_DIR/podman/pods/$image_name" "$image_dir";
+for IMAGE_DIR in "$SOURCE_DIR/images/"*/; do
+  
+  if test -d "$IMAGE_DIR"; then
+    
+    # Image name (derived from the directory name)
+    IMAGE_NAME=$(basename "$IMAGE_DIR");
 
-    if test -d "$SOURCE_DIR/$image_name"; then
-      for file in "$SOURCE_DIR/$image_name/"*; do
-        if test -e "$file"; then
-          ln -s "$file" "$image_dir";
-        fi;
-      done
-    fi
+    # Create the image directory in the configuration directory if it does not exist
+    mkdir -p "$CONFIG_DIR/$IMAGE_NAME";
+
+    # Copy all files and directories from the source image directory to the configuration directory
+    cp -R "$IMAGE_DIR"* "$CONFIG_DIR/$IMAGE_NAME/";
+
   fi
+
 done
 
 ### Secrets
