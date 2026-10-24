@@ -6,9 +6,6 @@
 # (the script will stop immediately if a variable is not set or a command fails)
 set -eu;
 
-# Scripts base URL
-SCRIPTS_BASE_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/scripts';
-
 # Usage instructions for the script
 USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository URL> <GitHub repository access token>$(tput sgr0)";
 
@@ -57,6 +54,16 @@ fi
 echo "Temporary directory:"
 echo "$(tput bold)$(tput setaf 4)$TEMP_DIR$(tput sgr0)";
 
+# Create source directory
+SOURCE_DIR="$TEMP_DIR/install";
+mkdir -p "$SOURCE_DIR";
+
+# Download source files from the GitHub repository
+echo "Downloading source files from the GitHub repository...";
+git clone "https://github.com/marcobarrios-fi/podman-setup.git" "$SOURCE_DIR";
+
+echo "$(tput bold)$(tput setaf 2)Downloading source files completed.$(tput sgr0)";
+
 # Create configuration directory
 CONFIG_DIR="$TEMP_DIR/config";
 mkdir -p "$CONFIG_DIR";
@@ -67,55 +74,50 @@ git clone "https://x-access-token:$GITHUB_REPOSITORY_TOKEN@github.com/$GITHUB_RE
 
 echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
 
+# Link source files to the configuration directory
+for image_dir in "$CONFIG_DIR/images/"*/; do
+  if test -d "$image_dir"; then
+    image_name=$(basename "$image_dir");
+
+    ln -s "$CONFIG_DIR/podman/pods/$image_name" "$image_dir";
+
+    if test -d "$SOURCE_DIR/$image_name"; then
+      for file in "$SOURCE_DIR/$image_name/"*; do
+        if test -e "$file"; then
+          ln -s "$file" "$image_dir";
+        fi;
+      done
+    fi
+  fi
+done
+
 ### Secrets
 
 # Secrets initialization script
-SECRETS_INIT_SCRIPT='podman-secrets-init.sh';
+SECRETS_INIT_SCRIPT="$SOURCE_DIR/scripts/podman-secrets-init.sh";
 
-# Temporary secrets initialization script
-TEMP_SECRETS_INIT_SCRIPT="$TEMP_DIR/$SECRETS_INIT_SCRIPT";
-
-# Download secrets initialization script
-echo "Downloading secrets initialization script...";
-curl --fail --location --silent --output "$TEMP_SECRETS_INIT_SCRIPT" "$SCRIPTS_BASE_URL/$SECRETS_INIT_SCRIPT";
-
-# Verify that the secrets initialization script was successfully downloaded
-if test ! -f "$TEMP_SECRETS_INIT_SCRIPT"; then
-  echo "$(tput bold)$(tput setaf 1)Error: Secrets initialization script could not be downloaded.$(tput sgr0)" && exit 1;
+# Verify that the secrets initialization script exists
+if test ! -f "$SECRETS_INIT_SCRIPT"; then
+  echo "$(tput bold)$(tput setaf 1)Error: Secrets initialization script does not exist.$(tput sgr0)" && exit 1;
 fi
 
 # Execute secrets initialization script 
-# (passes secrets as an environment variable to the script)
-env CONFIG_DIR="$CONFIG_DIR" sh "$TEMP_SECRETS_INIT_SCRIPT";
-
-# Delete secrets initialization script
-echo "Deleting secrets initialization script...";
-rm "$TEMP_SECRETS_INIT_SCRIPT";
+# (passes the configuration directory as an environment variable to the script)
+env CONFIG_DIR="$CONFIG_DIR" sh "$SECRETS_INIT_SCRIPT";
 
 ### Pods
 
 # Pods initialization script
-PODS_INIT_SCRIPT='podman-pods-init.sh';
+PODS_INIT_SCRIPT="$SOURCE_DIR/scripts/podman-pods-init.sh";
 
-# Temporary pods initialization script
-TEMP_PODS_INIT_SCRIPT="$TEMP_DIR/$PODS_INIT_SCRIPT";
-
-# Download pods initialization script
-echo "Downloading pods initialization script...";
-curl --fail --location --silent --output "$TEMP_PODS_INIT_SCRIPT" "$SCRIPTS_BASE_URL/$PODS_INIT_SCRIPT";
-
-# Verify that the pods initialization script was successfully downloaded
-if test ! -f "$TEMP_PODS_INIT_SCRIPT"; then
-  echo "$(tput bold)$(tput setaf 1)Error: Pods initialization script could not be downloaded.$(tput sgr0)" && exit 1;
+# Verify that the pods initialization script exists
+if test ! -f "$PODS_INIT_SCRIPT"; then
+  echo "$(tput bold)$(tput setaf 1)Error: Pods initialization script does not exist.$(tput sgr0)" && exit 1;
 fi
 
 # Execute pods initialization script 
-# (passes configuration directory as an environment variable to the script)
-env CONFIG_DIR="$CONFIG_DIR" sh "$TEMP_PODS_INIT_SCRIPT";
-
-# Delete pods initialization script
-echo "Deleting pods initialization script...";
-rm "$TEMP_PODS_INIT_SCRIPT";
+# (passes the configuration directory as an environment variable to the script)
+env CONFIG_DIR="$CONFIG_DIR" sh "$PODS_INIT_SCRIPT";
 
 ### Cleanup
 
