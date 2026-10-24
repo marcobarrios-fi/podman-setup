@@ -100,14 +100,14 @@ RUN apk update && apk add --no-cache gettext-envsubst mosquitto
 # Set container host name
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
-# Remove default configuration
+# Delete default configuration
 RUN rm '/etc/mosquitto/mosquitto.conf'
 
 # Copy configuration template to the temporary directory
-COPY 'mosquitto-config.conf' '/tmp/mosquitto-config.conf'
+COPY 'mosquitto-config-template.conf' '/tmp/mosquitto-config-template.conf'
 
 # Create configuration file from the Mosquitto configuration template and delete the configuration template
-RUN envsubst < '/tmp/mosquitto-config.conf' > "$CONFIG_FILE" && rm '/tmp/mosquitto-config.conf'
+RUN envsubst < '/tmp/mosquitto-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/mosquitto-config-template.conf'
 
 ### Secrets
 
