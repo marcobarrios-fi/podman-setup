@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Podman Initialization Shell Script
-# Usage: podman machine ssh <podman machine name> && curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-setup/main/scripts/podman-init.sh' && sh 'podman-init.sh' '<GitHub repository name>' '<GitHub repository access token>'
+# Usage: podman machine ssh <podman machine name> && curl --location --output 'podman-init.sh' 'https://barrios.co/podman-init' && sh 'podman-init.sh' '<GitHub repository name>' '<GitHub repository access token>'
 
 # Enable strict error handling 
 # (the script will stop immediately if a variable is not set or a command fails)
