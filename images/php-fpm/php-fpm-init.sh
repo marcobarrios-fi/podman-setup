@@ -16,12 +16,5 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/php-fpm-config.conf'; then
-  # Create configuration file from the configuration template
-  envsubst < '/tmp/php-fpm-config.conf' > "$CONFIG_FILE";
-  # Delete configuration template
-  rm '/tmp/php-fpm-config.conf';
-fi
-
 # Start PHP-FPM
 exec php-fpm --nodaemonize
