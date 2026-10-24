@@ -68,8 +68,10 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
 
   fi
 
+  echo "$(tput bold)$(tput setaf 2)Pods initialization completed.$(tput sgr0)";
+
 else
 
-  echo "$(tput bold)$(tput setaf 3)Warning: Pods initialization skipped.$(tput sgr0)";
+  echo "$(tput bold)Pods initialization canceled.$(tput sgr0)";
 
 fi
