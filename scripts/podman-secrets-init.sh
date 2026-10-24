@@ -62,7 +62,9 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
 
       # Display secret details
       echo "$SECRET_NAME secret:";
-      echo "$(tput dim)" && podman secret inspect --pretty "$SECRET_NAME" && echo "$(tput sgr0)";
+      echo "$(tput dim)"; 
+      podman secret inspect --pretty "$SECRET_NAME";
+      echo "$(tput sgr0)";
 
     done
 
