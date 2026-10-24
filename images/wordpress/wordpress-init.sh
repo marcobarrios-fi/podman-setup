@@ -33,6 +33,13 @@ chmod -R g+w "$DATA_DIR";
 
 ### Configuration
 
+if test -f '/tmp/php-fpm-config.conf'; then
+  # Create PHP-FPM configuration file from the configuration template
+  envsubst < '/tmp/php-fpm-config.conf' > '/etc/php/php-fpm.d/php-fpm.conf';
+  # Delete PHP-FPM configuration template
+  rm '/tmp/php-fpm-config.conf';
+fi
+
 if test -d '/tmp/wordpress'; then
 
   # Remove existing files, including hidden files, from the application directory
