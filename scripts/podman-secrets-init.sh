@@ -62,7 +62,7 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
         # Create secret
         podman kube play --replace --network 'podman' "$TEMP_CONFIG_FILE";
 
-        # Remove the temporary configuration file
+        # Delete the temporary configuration file
         rm -f "$TEMP_CONFIG_FILE";
 
       fi
