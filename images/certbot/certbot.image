@@ -78,7 +78,7 @@ ARG DIGITALOCEAN_CONFIG='/etc/letsencrypt/credentials/digitalocean-dns.ini'
 # DigitalOcean configuration environment variable
 ENV DIGITALOCEAN_CONFIG="$DIGITALOCEAN_CONFIG"
 
-## SSL variables
+## SSL Configuration
 
 # SSL private keys directory build-time variable
 ARG SSL_KEYS_DIR='/etc/ssl/private'
@@ -115,10 +115,10 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 RUN echo '--max-log-backups = 0' > '/etc/letsencrypt/cli.ini'
 
 # Copy Cloudflare DNS configuration template to the temporary directory
-COPY 'certbot-cloudflare-dns.ini' '/tmp/cloudflare-dns.ini'
+COPY 'certbot-cloudflare-dns-template.ini' '/tmp/cloudflare-dns-template.ini'
 
 # Copy DigitalOcean DNS configuration template to the temporary directory
-COPY 'certbot-digitalocean-dns.ini' '/tmp/digitalocean-dns.ini'
+COPY 'certbot-digitalocean-dns-template.ini' '/tmp/digitalocean-dns-template.ini'
 
 ### Secrets
 
