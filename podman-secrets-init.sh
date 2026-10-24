@@ -1,104 +1,79 @@
 #!/bin/sh
 
 # Podman Secrets Initialization Shell Script
-# Copyright ©️ 2025-2026 Marco Barrios. All rights reserved.
-# Initializes Podman Cloudflare API token, DigitalOcean API token, and MQTT password secrets
-# Usage: chmod +x podman-secrets-init.sh && sh podman-secrets-init.sh;
+# Creates Podman secrets based on Kubernetes YAML files
+# Usage: env CONFIG_DIR="<configuration_directory>" sh podman-secrets-init.sh
 
-# Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
+# Enable strict error handling 
+# (the script will stop immediately if a variable is not set or a command fails)
 set -eu;
 
-podman_secrets_init() {
+# Prompt initializing secrets
+printf "$(tput bold)Initialize secrets? (Yes/No) $(tput sgr0)" && read input;
 
-  # Prompt initializing Podman secrets
-  printf "$(tput bold)Initialize Podman secrets? (Yes/No) $(tput sgr0)" && read input;
+# Evaluate user input for initializing secrets
+if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
 
-  # Evaluate user input for initializing Podman secrets
-  if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
+  # Verify that the configuration directory environment variable is specified
+  if test ! -n "${CONFIG_DIR:-}"; then
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration directory is not specified.$(tput sgr0)" && exit 1;
+  fi
 
-    echo "Initializing Podman secrets...";
+  # Verify that the configuration directory exists
+  if test ! -d "$CONFIG_DIR"; then
+    echo "$(tput bold)$(tput setaf 1)Error: Configuration directory does not exist.$(tput sgr0)" && exit 1;
+  fi
 
-    # If secrets are specified
-    if test -n "$SECRETS"; then
+  SECRETS_DIR="$CONFIG_DIR/podman/secrets";
 
-      for SECRET in $SECRETS; do
-        
-        ### Cloudflare API Token
+  echo "Secrets directory: $SECRETS_DIR";
 
-        if test "$SECRET" = 'cloudflare-api-token'; then
+  # Verify that the secrets directory exists
+  if test ! -d "$SECRETS_DIR"; then
+    echo "$(tput bold)$(tput setaf 1)Error: Secrets configuration directory does not exist.$(tput sgr0)" && exit 1;
+  fi
 
-          # If Cloudflare API token secret does not exist
-          if ! podman secret exists cloudflare-api-token; then
-            # Prompt Cloudflare API token
-            printf "$(tput bold)Enter Cloudflare API token: $(tput sgr0)" && read CLOUDFLARE_API_TOKEN;
-            # Set Cloudflare API token environment variable
-            export CLOUDFLARE_API_TOKEN;
-            # Set Cloudflare API token secret
-            podman secret create --env=true cloudflare-api-token 'CLOUDFLARE_API_TOKEN';
-          fi
+  # Assign secrets as positional arguments
+  set -- "$SECRETS_DIR/"*.yaml;
 
-          # Display Cloudflare API token secret details
-          echo 'Cloudflare API token secret:';
-          podman secret inspect --pretty cloudflare-api-token && echo;
+  # If secrets are specified
+  if test -e "$1"; then
 
-        ### DigitalOcean API Token
+    for SECRET in "$@"; do
 
-        elif test "$SECRET" = 'digitalocean-api-token'; then
+      SECRET_NAME=$(basename "$SECRET" '.yaml');
 
-          # If DigitalOcean API token secret does not exist
-          if ! podman secret exists digitalocean-api-token; then
-            # Prompt DigitalOcean API token
-            printf "$(tput bold)Enter DigitalOcean API token: $(tput sgr0)" && read DIGITALOCEAN_API_TOKEN;
-            # Set DigitalOcean API token environment variable
-            export DIGITALOCEAN_API_TOKEN;
-            # Set DigitalOcean API token secret
-            podman secret create --env=true digitalocean-api-token 'DIGITALOCEAN_API_TOKEN';
-          fi
+      # If the secret does not exist
+      if ! podman secret exists "$SECRET_NAME"; then
+          
+          # Prompt secret value
+          printf "$(tput bold)Enter secret for $SECRET_NAME: $(tput sgr0)" && read SECRET_VALUE;
+          
+          # Set secret environment variable
+          export SECRET_VALUE;
+          
+          # Set secret
+          podman secret create --env=true "$SECRET_NAME" 'SECRET_VALUE';
 
-          # Display DigitalOcean API token secret details
-          echo 'DigitalOcean API token secret:';
-          podman secret inspect --pretty digitalocean-api-token && echo;
+          # Unset secret environment variable
+          unset SECRET_VALUE;
+          
+      fi
 
-        ### MQTT Password
+      # Display secret details
+      echo "$SECRET_NAME secret:";
+      echo "$(tput dim)" && podman secret inspect --pretty "$SECRET_NAME" && echo "$(tput sgr0)";
 
-        elif test "$SECRET" = 'mqtt-password'; then
+    done
 
-          # If MQTT password secret does not exist
-          if ! podman secret exists mqtt-password; then
-            # Prompt MQTT password
-            printf "$(tput bold)Enter MQTT password: $(tput sgr0)" && read MQTT_PASSWORD;
-            # Set MQTT password environment variable
-            export MQTT_PASSWORD;
-            # Set MQTT password secret
-            podman secret create --env=true mqtt-password 'MQTT_PASSWORD';
-          fi
+  else 
 
-          # Display MQTT password secret details
-          echo 'MQTT password secret:';
-          podman secret inspect --pretty mqtt-password && echo;
-
-        else
-
-          echo "$(tput bold)$(tput setaf 1)Error: Unsupported secret $SECRET.$(tput sgr0)" && exit 1;
-        
-        fi
-
-      done
-
-      echo "$(tput bold)$(tput setaf 2)Podman secrets initialization completed.$(tput sgr0)";
-
-    else 
-
-      echo "$(tput bold)$(tput setaf 3)Warning: No secrets specified.$(tput sgr0)";
-
-    fi
-
-  else
-
-    echo "$(tput bold)$(tput setaf 3)Podman secrets initialization canceled.$(tput sgr0)";
+    echo "$(tput bold)$(tput setaf 3)Warning: No secret configuration files found.$(tput sgr0)";
 
   fi
 
-}
+else
 
-podman_secrets_init;
+  echo "$(tput bold)$(tput setaf 3)Warning: Secrets initialization skipped.$(tput sgr0)";
+
+fi
