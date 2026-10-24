@@ -33,16 +33,9 @@ chmod -R g+w "$DATA_DIR";
 
 ### Configuration
 
-if test -f '/tmp/php-fpm-config.conf'; then
-  # Create PHP-FPM configuration file from the configuration template
-  envsubst < '/tmp/php-fpm-config.conf' > '/etc/php/php-fpm.d/php-fpm.conf';
-  # Delete PHP-FPM configuration template
-  rm '/tmp/php-fpm-config.conf';
-fi
-
 if test -d '/tmp/wordpress'; then
 
-  # Remove existing files, including hidden files, from the application directory
+  # Delete existing files, including hidden files, from the application directory
   rm -rf "$APP_DIR"/* && find "$APP_DIR" -type f -delete;
 
   # Move files in the temporary directory to the application directory
@@ -60,7 +53,7 @@ if test -d '/tmp/wordpress'; then
       # Copy existing plugins to the data directory
       cp -r "$APP_DIR/wp-content/plugins" "$DATA_DIR/plugins";
     fi
-    # Remove plugins directory
+    # Delete plugins directory
     rm -rf "$APP_DIR/wp-content/plugins";
     # Create symbolic link for plugins pointing to the data directory
     ln -s "$DATA_DIR/plugins" "$APP_DIR/wp-content/plugins";
@@ -73,18 +66,18 @@ if test -d '/tmp/wordpress'; then
       # Copy existing themes to the data directory
       cp -r "$APP_DIR/wp-content/themes" "$DATA_DIR/themes";
     fi
-    # Remove themes directory
+    # Delete themes directory
     rm -rf "$APP_DIR/wp-content/themes";
     # Create symbolic link for themes pointing to the data directory
     ln -s "$DATA_DIR/themes" "$APP_DIR/wp-content/themes";
   fi
   
   if test -d "$APP_DIR/wp-content/uploads"; then
-    # Remove uploads directory
+    # Delete uploads directory
     rm -rf "$APP_DIR/wp-content/uploads";
   fi
   
-  # Create symbolic link for uploads pointing to the data directory
+  # Create symbolic link for the uploads directory pointing to the data directory
   ln -s "$DATA_DIR/uploads" "$APP_DIR/wp-content/uploads";
 
   # Set ownership for the application directory
