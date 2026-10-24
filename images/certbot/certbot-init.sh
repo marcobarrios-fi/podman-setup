@@ -27,14 +27,14 @@ if test -s '/run/secrets/cloudflare-api-token'; then
   export CLOUDFLARE_API_TOKEN="$(cat '/run/secrets/cloudflare-api-token')";
 fi
 
-if test -f '/tmp/cloudflare-dns.ini'; then
+if test -f '/tmp/cloudflare-dns-template.ini'; then
   # Create Cloudflare DNS configuration file from the configuration template
-  envsubst < '/tmp/cloudflare-dns.ini' > "$CLOUDFLARE_CONFIG";
+  envsubst < '/tmp/cloudflare-dns-template.ini' > "$CLOUDFLARE_CONFIG";
   # Set Cloudflare DNS configuration file permissions
   # (suppresses "Unsafe permissions on credentials configuration file" warning messages)
   chmod 600 "$CLOUDFLARE_CONFIG";
   # Delete configuration template
-  rm '/tmp/cloudflare-dns.ini';
+  rm '/tmp/cloudflare-dns-template.ini';
 fi
 
 ### DigitalOcean configuration
@@ -44,14 +44,14 @@ if test -s '/run/secrets/digitalocean-api-token'; then
   export DIGITALOCEAN_API_TOKEN="$(cat '/run/secrets/digitalocean-api-token')";
 fi
 
-if test -f '/tmp/digitalocean-dns.ini'; then
+if test -f '/tmp/digitalocean-dns-template.ini'; then
   # Create DigitalOcean DNS configuration file from the configuration template
-  envsubst < '/tmp/digitalocean-dns.ini' > "$DIGITALOCEAN_CONFIG";
+  envsubst < '/tmp/digitalocean-dns-template.ini' > "$DIGITALOCEAN_CONFIG";
   # Set DigitalOcean DNS configuration file permissions
   # (suppresses "Unsafe permissions on credentials configuration file" warning messages)
   chmod 600 "$DIGITALOCEAN_CONFIG";
   # Delete configuration template
-  rm '/tmp/digitalocean-dns.ini';
+  rm '/tmp/digitalocean-dns-template.ini';
 fi
 
 # Start Certbot
