@@ -88,22 +88,24 @@ RUN mkdir -p '/etc/nginx/conf.d'
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
 # Copy configuration template
-COPY 'nginx-config.conf' '/tmp/nginx-config.conf'
+COPY 'nginx-config-template.conf' '/tmp/nginx-config-template.conf'
 
-# Delete default configuration file and create configuration file from the configuration template
-RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config.conf' > '/etc/nginx/nginx.conf' && rm '/tmp/nginx-config.conf';
+# Delete default configuration file, create configuration file from the configuration template, and delete the configuration template
+RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config-template.conf' > '/etc/nginx/nginx.conf' && rm '/tmp/nginx-config-template.conf'
 
 ## PHP-FPM (PHP FastCGI Process Manager) Configuration
 
 # Copy PHP-FPM configuration file
-COPY 'nginx-php-fpm.conf' '/etc/nginx/php-fpm.conf'
+COPY 'nginx-php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
+
+RUN envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
 
 # Add script filename FastCGI parameter to the FastCGI configuration file
 RUN echo 'fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;' >> '/etc/nginx/fastcgi.conf'
 
 ### Hosts Configuration
 
-# Remove default host configuration
+# Delete default host configuration
 RUN rm '/etc/nginx/http.d/default.conf'
 
 # Copy host configuration files to the temporary directory
