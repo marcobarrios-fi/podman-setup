@@ -1,21 +1,22 @@
 #!/bin/sh
 
 # Podman Initialization Shell Script
+# Usage: podman machine ssh <podman machine name> && curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-setup/main/scripts/podman-init.sh' && sh 'podman-init.sh' '<GitHub repository name>' '<GitHub repository access token>'
 
 # Enable strict error handling 
 # (the script will stop immediately if a variable is not set or a command fails)
 set -eu;
 
 # Usage instructions for the script
-USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository URL> <GitHub repository access token>$(tput sgr0)";
+USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository> <GitHub repository access token>$(tput sgr0)";
 
 echo "Initializing Podman...";
 
 # The script expects two arguments; the repository URL and the repository access token
 
-# Verify that the GitHub repository URL argument was provided
+# Verify that the GitHub repository name argument was provided
 if test "$#" -lt 1; then
-  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository URL argument was not provided.$(tput sgr0)";
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository name argument was not provided.$(tput sgr0)";
   echo "$USAGE_INSTRUCTIONS" && exit 1;
 fi
 
@@ -25,15 +26,15 @@ if test "$#" -lt 2; then
   echo "$USAGE_INSTRUCTIONS" && exit 1;
 fi
 
-# GitHub repository URL
-GITHUB_REPOSITORY_URL="$1";
+# GitHub repository name
+GITHUB_REPOSITORY_NAME="$1";
 
 # GitHub repository access token
 GITHUB_REPOSITORY_TOKEN="$2";
 
-# Verify that the repository URL is specified
-if test ! -n "${GITHUB_REPOSITORY_URL:-}"; then
-  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository URL is not specified.$(tput sgr0)" && exit 1;
+# Verify that the repository name is specified
+if test ! -n "${GITHUB_REPOSITORY_NAME:-}"; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository name is not specified.$(tput sgr0)" && exit 1;
 fi
 
 # Verify that the repository access token is specified
@@ -73,7 +74,7 @@ mkdir -p "$CONFIG_DIR";
 # Download configuration files from the GitHub repository
 echo "Downloading configuration files from the GitHub repository...";
 echo "$(tput dim)";
-git clone "https://x-access-token:$GITHUB_REPOSITORY_TOKEN@github.com/$GITHUB_REPOSITORY_URL.git" "$CONFIG_DIR";
+git clone "https://x-access-token:$GITHUB_REPOSITORY_TOKEN@github.com/$GITHUB_REPOSITORY_NAME.git" "$CONFIG_DIR";
 echo "$(tput sgr0)";
 
 echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
