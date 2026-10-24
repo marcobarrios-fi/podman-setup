@@ -26,16 +26,14 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
 
   PODS_DIR="$CONFIG_DIR/podman/pods";
 
-  echo "Pods directory:" && echo '/podman/pods';
-
   # Verify that the pods directory exists
   if test ! -d "$PODS_DIR"; then
     echo "$(tput bold)$(tput setaf 1)Error: Pods configuration directory does not exist.$(tput sgr0)" && exit 1;
   fi
 
-  # Change to the pods directory
-  echo 'Changing to pods directory...';
-  cd "$PODS_DIR";
+  # Change to the configuration directory
+  echo 'Changing to configuration directory...';
+  cd "$CONFIG_DIR";
 
   # Assign pods as positional arguments
   set -- "$PODS_DIR/"*.yaml;
@@ -53,8 +51,11 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
       # Evaluate user input for initializing the pod
       if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
           
+        # Copy pod configuration file to the configuration directory
+        cp "$POD" "$CONFIG_DIR/$POD_NAME.yaml";
+
         # Create pod
-        podman kube play --replace --no-pod-prefix "$POD";
+        podman kube play --replace --no-pod-prefix "$POD_NAME.yaml";
 
         # Display pod details
         echo "$POD_NAME pod:";
