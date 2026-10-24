@@ -60,7 +60,9 @@ mkdir -p "$SOURCE_DIR";
 
 # Download source files from the GitHub repository
 echo "Downloading source files from the GitHub repository...";
+echo "$(tput dim)";
 git clone "https://github.com/marcobarrios-fi/podman-setup.git" "$SOURCE_DIR";
+echo "$(tput sgr0)";
 
 echo "$(tput bold)$(tput setaf 2)Downloading source files completed.$(tput sgr0)";
 
@@ -70,7 +72,9 @@ mkdir -p "$CONFIG_DIR";
 
 # Download configuration files from the GitHub repository
 echo "Downloading configuration files from the GitHub repository...";
+echo "$(tput dim)";
 git clone "https://x-access-token:$GITHUB_REPOSITORY_TOKEN@github.com/$GITHUB_REPOSITORY_URL.git" "$CONFIG_DIR";
+echo "$(tput sgr0)";
 
 echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
 
