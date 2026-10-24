@@ -98,11 +98,14 @@ RUN ln -s "/usr/bin/$PHP_VERSION" '/usr/bin/php' && ln -s "/usr/sbin/$PHP_FPM_VE
 # Set container host name
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
-# Remove default configuration
+# Delete default configuration
 RUN rm '/etc/php/php-fpm.d/www.conf'
 
 # Copy configuration template to the temporary directory
-COPY 'php-fpm-config.conf' '/tmp/php-fpm-config.conf'
+COPY 'php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
+
+# Create configuration file from the configuration template and delete the template
+RUN envsubst < '/tmp/php-fpm-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/php-fpm-config-template.conf'
 
 # Rename Client URL extension configuration file (does not impact functionality)
 RUN mv '/etc/php/conf.d/00_curl.ini' '/etc/php/conf.d/curl.ini'
