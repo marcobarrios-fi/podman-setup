@@ -54,6 +54,11 @@ ARG DATA_DIR="/var/lib/$APP"
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
+# Configuration file build-time variable
+ARG CONFIG_FILE='/etc/php/php-fpm.d/php-fpm.conf'
+# Configuration file environment variable
+ENV CONFIG_FILE="$CONFIG_FILE"
+
 # Log file build-time variable
 ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
@@ -96,11 +101,8 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 # Remove default configuration
 RUN rm '/etc/php/php-fpm.d/www.conf'
 
-# Copy configuration template
+# Copy configuration template to the temporary directory
 COPY 'php-fpm-config.conf' '/tmp/php-fpm-config.conf'
-
-# Create configuration file from the configuration template and delete the configuration template
-RUN envsubst < '/tmp/php-fpm-config.conf' > '/etc/php/php-fpm.d/php-fpm.conf' && rm '/tmp/php-fpm-config.conf';
 
 # Rename Client URL extension configuration file (does not impact functionality)
 RUN mv '/etc/php/conf.d/00_curl.ini' '/etc/php/conf.d/curl.ini'
