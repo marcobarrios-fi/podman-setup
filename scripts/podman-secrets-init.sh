@@ -26,8 +26,6 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
 
   SECRETS_DIR="$CONFIG_DIR/podman/secrets";
 
-  echo "Secrets directory:" && echo '/podman/secrets';
-
   # Verify that the secrets directory exists
   if test ! -d "$SECRETS_DIR"; then
     echo "$(tput bold)$(tput setaf 1)Error: Secrets configuration directory does not exist.$(tput sgr0)" && exit 1;
