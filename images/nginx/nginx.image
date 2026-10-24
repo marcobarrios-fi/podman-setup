@@ -1,0 +1,135 @@
+# marcobarrios.fi NGINX container image
+# marcobarrios.fi-nginx
+
+# Latest Alpine release
+FROM alpine:latest
+
+### Metadata
+
+# Container image version
+LABEL version='1.0.0'
+# Application name
+LABEL image.app-name='NGINX'
+# Container image description
+LABEL description='Web server and reverse proxy'
+# Operating system version
+LABEL image.os-version='3.21.3'
+# Application version
+LABEL image.app-version='1.26.1'
+# Application website
+LABEL image.app-url='https://nginx.org/'
+
+### Variables
+
+# App build-time variable
+ARG APP='nginx'
+# App environment variable
+ENV APP="$APP"
+
+# Domain build-time variable
+ARG DOMAIN='localhost'
+# Domain environment variable
+ENV DOMAIN="$DOMAIN"
+
+# Group identification build-time variable
+ARG GROUP_ID='101'
+# Group name build-time variable
+ARG GROUP="$APP"
+
+# User identification build-time variable
+ARG USER_ID='101'
+# User name build-time variable
+ARG USER="$APP"
+
+# Data directory build-time variable
+ARG DATA_DIR="/var/lib/$APP"
+# Data directory environment variable
+ENV DATA_DIR="$DATA_DIR"
+
+# Sites directory build-time variable
+ARG SITES_DIR='/var/lib/nginx/html'
+# Sites directory environment variable
+ENV SITES_DIR="$SITES_DIR"
+
+# Log file build-time variable
+ARG LOG_FILE="/var/log/$APP.log"
+# Log file environment variable
+ENV LOG_FILE="$LOG_FILE"
+
+# HTTP port build-time variable
+ARG HTTP_PORT='80'
+# HTTP port environment variable
+ENV HTTP_PORT="$HTTP_PORT"
+
+# HTTPS port build-time variable
+ARG HTTPS_PORT='443'
+# HTTPS port environment variable
+ENV HTTPS_PORT="$HTTPS_PORT"
+
+### Users
+
+# Create user group and add user to the group
+RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --uid "$USER_ID" --system --ingroup "$GROUP" "$USER"
+
+### Packages
+
+# Install GNU Gettext environment substitution, NGINX web server and reverse proxy, and NGINX HTTP JavaScript module
+RUN apk update && apk add --no-cache gettext-envsubst nginx nginx-mod-http-js
+
+### Directories
+# Mounted volumes are not available at the build time
+
+# Create configuration directory
+RUN mkdir -p '/etc/nginx/conf.d'
+
+### Configuration
+
+# Set container host name
+RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
+
+# Copy configuration template
+COPY 'nginx-config.conf' '/tmp/nginx-config.conf'
+
+# Delete default configuration file and create configuration file from the configuration template
+RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config.conf' > '/etc/nginx/nginx.conf' && rm '/tmp/nginx-config.conf';
+
+## PHP-FPM (PHP FastCGI Process Manager) Configuration
+
+# Copy PHP-FPM configuration file
+COPY 'nginx-php-fpm.conf' '/etc/nginx/php-fpm.conf'
+
+# Add script filename FastCGI parameter to the FastCGI configuration file
+RUN echo 'fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;' >> '/etc/nginx/fastcgi.conf'
+
+### Hosts Configuration
+
+# Remove default host configuration
+RUN rm '/etc/nginx/http.d/default.conf'
+
+# Copy host configuration files to the temporary directory
+COPY 'hosts/'*.conf '/tmp/hosts/'
+
+# Copy sites directory to the temporary directory
+COPY 'sites/' '/tmp/sites/'
+
+# Copy initialization script
+COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
+
+# Make the initialization script executable
+RUN chmod +x "/usr/local/bin/$APP-init"
+
+# Copy reload script
+COPY "$APP-reload.sh" "/usr/local/bin/$APP-reload"
+
+# Make the reload script executable and schedule the script to run weekly
+# Todo: Verify that scheduling works
+RUN chmod +x "/usr/local/bin/$APP-reload" && cp "/usr/local/bin/$APP-reload" '/etc/periodic/weekly/'
+
+### Ports
+
+EXPOSE "$HTTP_PORT" "$HTTPS_PORT"
+
+# Switch to container user
+# USER "$USER"
+
+ENTRYPOINT ["nginx-init"]
