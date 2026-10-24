@@ -50,11 +50,13 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
       if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
           
         # Create pod
-        podman kube play --replace --no-pod-prefix "$PODS_DIR/$POD";
+        podman kube play --replace --no-pod-prefix "$POD";
 
         # Display pod details
         echo "$POD_NAME pod:";
-        echo "$(tput dim)" && podman pod inspect "$POD_NAME" && echo "$(tput sgr0)";
+        echo "$(tput dim)";
+        podman pod inspect "$POD_NAME";
+        echo "$(tput sgr0)";
 
       fi
 
