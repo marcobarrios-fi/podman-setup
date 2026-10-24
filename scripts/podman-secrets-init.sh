@@ -48,22 +48,22 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
         printf "$(tput bold)Enter secret for $SECRET_NAME: $(tput sgr0)" && read SECRET;
 
         # Encode the secret value (Kubernetes secret data is base64 encoded)
-        SECRET=$(printf '%s' "$SECRET" | base64 | tr -d '\n');
+        export SECRET="$(printf '%s' "$SECRET" | base64 | tr -d '\n')";
 
-        # Create a configuration file template
-        mv "$SECRET_CONFIG_FILE" "$SECRET_NAME-template.yaml";
+        # Create a temporary configuration file
+        TEMP_CONFIG_FILE=$(mktemp);
 
-        # Substitute the secret value in the configuration file template and create the configuration file
-        envsubst < "$SECRET_NAME-template.yaml" > "$SECRET_CONFIG_FILE";
+        # Substitute the secret value in the configuration file template
+        envsubst < "$SECRET_CONFIG_FILE" > "$TEMP_CONFIG_FILE";
 
         # Unset secret environment variable
         unset SECRET;
 
-        # Remove the configuration file template
-        rm "$SECRET_NAME-template.yaml";
-
         # Create secret
-        podman kube play "$SECRET_CONFIG_FILE";
+        podman kube play "$TEMP_CONFIG_FILE";
+
+        # Remove the temporary configuration file
+        rm -f "$TEMP_CONFIG_FILE";
 
       fi
 
