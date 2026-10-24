@@ -22,12 +22,12 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/zigbee2mqtt-plugin-config.json'; then
+if test -f '/tmp/zigbee2mqtt-plugin-config-template.json'; then
   # Create Zigbee2MQTT plugin configuration file from the configuration template
   mkdir -p "$DATA_DIR/.matterbridge";
-  envsubst < '/tmp/zigbee2mqtt-plugin-config.json' > "$DATA_DIR/.matterbridge/matterbridge-zigbee2mqtt.config.json";
+  envsubst < '/tmp/zigbee2mqtt-plugin-config-template.json' > "$DATA_DIR/.matterbridge/matterbridge-zigbee2mqtt.config.json";
   # Delete configuration template
-  rm '/tmp/zigbee2mqtt-plugin-config.json';
+  rm '/tmp/zigbee2mqtt-plugin-config-template.json';
 fi
 
 # Start Matterbridge
