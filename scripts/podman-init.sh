@@ -46,6 +46,22 @@ fi
 echo "Creating temporary scripts directory...";
 TEMP_DIR=$(mktemp --directory);
 
+### Cleanup
+
+cleanup() {
+  
+  # Delete temporary directory
+  echo "Deleting temporary directory...";
+  rm -rf "$TEMP_DIR";
+
+  # Remove unused Podman images
+  echo 'Removing unused Podman images...';
+  podman image prune --all --force;
+
+}
+
+trap cleanup EXIT HUP INT TERM;
+
 # Verify that the temporary directory was successfully created
 if test ! -d "$TEMP_DIR"; then
   echo "$(tput bold)$(tput setaf 1)Error: Temporary directory could not be created.$(tput sgr0)" && exit 1;
@@ -127,15 +143,7 @@ fi
 # (passes the configuration directory as an environment variable to the script)
 env CONFIG_DIR="$CONFIG_DIR" sh "$PODS_INIT_SCRIPT";
 
-### Cleanup
-
-# Delete temporary directory
-echo "Deleting temporary directory...";
-rm -rf "$TEMP_DIR";
-
-# Remove unused Podman images
-echo 'Removing unused Podman images...';
-podman image prune --all --force;
+cleanup;
 
 # List Podman images
 echo "Podman container images:";
