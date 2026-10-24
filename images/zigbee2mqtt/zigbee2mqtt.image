@@ -51,9 +51,9 @@ ARG DATA_DIR="$APP_DIR/data"
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
-# Config file build-time variable
+# Configuration file build-time variable
 ARG CONFIG_FILE="$DATA_DIR/configuration.yaml"
-# Config file environment variable
+# Configuration file environment variable
 ENV CONFIG_FILE="$CONFIG_FILE"
 
 # Log file build-time variable
