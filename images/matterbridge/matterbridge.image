@@ -107,7 +107,7 @@ RUN matterbridge --add matterbridge-zigbee2mqtt
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
 # Copy Zigbee2MQTT plugin configuration template to the temporary directory
-COPY 'matterbridge-zigbee2mqtt-plugin-config.json' '/tmp/zigbee2mqtt-plugin-config.json'
+COPY 'matterbridge-zigbee2mqtt-plugin-config-template.json' '/tmp/zigbee2mqtt-plugin-config-template.json'
 
 ### Secrets
 
