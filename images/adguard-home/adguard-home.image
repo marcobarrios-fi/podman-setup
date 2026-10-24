@@ -1,0 +1,109 @@
+# marcobarrios.fi AdGuard Home container image
+# marcobarrios.fi-adguard-home
+
+# Latest Alpine release
+FROM alpine:latest
+
+# Container image version
+LABEL version='1.0.0'
+# Application name
+LABEL image.app-name='AdGuard Home'
+# Container image description
+LABEL description='DNS server providing network-wide ad blocking and tracking prevention'
+# Operating system version
+LABEL image.os-version='3.24.2'
+# Application version
+LABEL image.app-version='0.107.79'
+# Application website
+LABEL image.app-url='https://adguard.com/en/adguard-home/'
+# Application documentation
+LABEL image.app-docs='https://github.com/adguardteam/adguardhome'
+
+### Variables
+
+# App build-time variable
+ARG APP='adguard-home'
+# App environment variable
+ENV APP="$APP"
+
+# Domain build-time variable
+ARG DOMAIN='localhost'
+# Domain environment variable
+ENV DOMAIN="$DOMAIN"
+
+# Group identification build-time variable
+ARG GROUP_ID='101'
+# Group name build-time variable
+ARG GROUP='adguard'
+
+# User identification build-time variable
+ARG USER_ID='101'
+# User name build-time variable
+ARG USER='adguard'
+
+# Application directory build-time variable
+ARG APP_DIR="/var/lib/$APP"
+# Application directory environment variable
+ENV APP_DIR="$APP_DIR"
+
+# Data directory build-time variable
+ARG DATA_DIR="/var/lib/$APP"
+# Data directory environment variable
+ENV DATA_DIR="$DATA_DIR"
+
+# Configuration file build-time variable
+ARG CONFIG_FILE="$DATA_DIR/config.yaml"
+# Configuration file environment variable
+ENV CONFIG_FILE="$CONFIG_FILE"
+
+# Log file build-time variable
+ARG LOG_FILE="/var/log/$APP.log"
+# Log file environment variable
+ENV LOG_FILE="$LOG_FILE"
+
+# Source URL build-time variable
+ARG SOURCE_URL='https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_amd64.tar.gz'
+
+### Users
+
+# Create user group and add user to the group
+RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --uid "$USER_ID" --system --ingroup "$GROUP" "$USER"
+
+### Packages
+
+# Install GNU Gettext environment substitution
+RUN apk update && apk add --no-cache gettext-envsubst
+
+# Download the latest version of AdGuard Home, extract the archive, move the application to the binaries directory, make the application executable, delete the temporary directory, and delete the downloaded archive
+RUN wget -O "$APP.tar.gz" "$SOURCE_URL" && tar -xzf "$APP.tar.gz" && mv 'AdGuardHome/AdGuardHome' "/usr/local/bin/$APP" && chmod +x "/usr/local/bin/$APP" && rm -rf 'AdGuardHome' && rm "$APP.tar.gz"
+
+### Directories
+# Mounted volumes are not available at the build time
+
+### Configuration
+
+# Copy configuration template to the temporary directory
+COPY 'adguard-home-config.yaml' '/tmp/config.yaml'
+
+# Copy filters to the temporary directory
+COPY '/filters/'*.conf '/tmp/filters/'
+
+# Set container host name
+RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
+
+### Secrets
+
+### Scripts
+
+# Copy initialization script
+COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
+
+# Make the initialization script executable
+RUN chmod +x "/usr/local/bin/$APP-init"
+
+### User
+
+# Switch to container user
+# USER "$USER"
+
+ENTRYPOINT ["adguard-home-init"]
