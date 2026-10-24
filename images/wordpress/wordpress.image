@@ -63,9 +63,9 @@ ARG DATA_DIR='/var/www/html/wordpress'
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
-# Config file build-time variable
+# Configuration file build-time variable
 ARG CONFIG_FILE="$APP_DIR/wp-config.php"
-# Config file environment variable
+# Configuration file environment variable
 ENV CONFIG_FILE="$CONFIG_FILE"
 
 # Database directory build-time variable
