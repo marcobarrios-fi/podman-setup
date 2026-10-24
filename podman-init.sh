@@ -1,257 +1,118 @@
 #!/bin/sh
 
 # Podman Initialization Shell Script
-# Copyright ©️ 2025-2026 Marco Barrios. All rights reserved.
-# Linux Usage: sudo curl --location --output '/usr/bin/podman-init' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sudo chmod +x '/usr/bin/podman-init' && podman-init <configuration file URL> <configuration file access token>
-# Mac Usage: curl --location --output 'podman-init.sh' 'https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main/podman-init.sh' && sh 'podman-init.sh' <configuration file URL> <configuration file access token>
 
-# Enable strict error handling (the script will stop immediately if a variable is not set or a command fails)
+# Enable strict error handling 
+# (the script will stop immediately if a variable is not set or a command fails)
 set -eu;
 
-podman_init() {
+# Scripts base URL
+SCRIPTS_BASE_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
 
-  echo "Initializing Podman...";
+# Usage instructions for the script
+USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository URL> <GitHub repository access token>$(tput sgr0)";
 
-  # The function expects two arguments; the configuration file URL and the configuration file access token
+echo "Initializing Podman...";
 
-  # Verify that the configuration file URL argument was provided
-  if test "$#" -lt 1; then
-    echo "$(tput bold)$(tput setaf 1)Error: Configuration file URL argument was not provided.$(tput sgr0)";
-    echo "Usage: $(tput bold)podman-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
-  fi
+# The script expects two arguments; the repository URL and the repository access token
 
-  # Verify that the configuration file access token argument was provided
-  if test "$#" -lt 2; then
-    echo "$(tput bold)$(tput setaf 1)Error: Configuration file access token argument was not provided.$(tput sgr0)";
-    echo "Usage: $(tput bold)podman-init <configuration file URL> <configuration file access token>$(tput sgr0)" && exit 1;
-  fi
-
-  # Configuration file URL
-  CONFIG_FILE_URL="$1";
+# Verify that the GitHub repository URL argument was provided
+if test "$#" -lt 1; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository URL argument was not provided.$(tput sgr0)";
+  echo "$USAGE_INSTRUCTIONS" && exit 1;
+fi
 
-  # Configuration file access token
-  CONFIG_FILE_TOKEN="$2";
+# Verify that the GitHub repository access token argument was provided
+if test "$#" -lt 2; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token argument was not provided.$(tput sgr0)";
+  echo "$USAGE_INSTRUCTIONS" && exit 1;
+fi
 
-  # Configuration file
-  CONFIG_FILE="$(mktemp)";
+# GitHub repository URL
+GITHUB_REPOSITORY_URL="$1";
 
-  # Download configuration file
-  echo "Downloading configuration file...";
-  curl --fail --location --silent --header "Authorization: Bearer $CONFIG_FILE_TOKEN" --output "$CONFIG_FILE" "$CONFIG_FILE_URL";  
- 
-  # Verify that the configuration file was successfully downloaded
-  if test ! -f "$CONFIG_FILE"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Configuration file could not be downloaded.$(tput sgr0)" && exit 1;
-  fi
+# GitHub repository access token
+GITHUB_REPOSITORY_TOKEN="$2";
 
-  # Source configuration file
-  echo "Loading configuration file...";
-  . "$CONFIG_FILE";
+# Verify that the repository URL is specified
+if test ! -n "${GITHUB_REPOSITORY_URL:-}"; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository URL is not specified.$(tput sgr0)" && exit 1;
+fi
 
-  # Delete configuration file
-  echo "Deleting configuration file...";
-  rm "$CONFIG_FILE";
+# Verify that the repository access token is specified
+if test ! -n "${GITHUB_REPOSITORY_TOKEN:-}"; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token is not specified.$(tput sgr0)" && exit 1;
+fi
 
-  # Verify configuration
+# Create temporary directory
+echo "Creating temporary scripts directory...";
+TEMP_DIR=$(mktemp --directory);
 
-  # Verify that the domain is specified
-  if test ! -n "${DOMAIN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Domain configuration option (DOMAIN) is not specified.$(tput sgr0)" && exit 1;
-  fi
+# Verify that the temporary directory was successfully created
+if test ! -d "$TEMP_DIR"; then
+  echo "$(tput bold)$(tput setaf 1)Error: Temporary directory could not be created.$(tput sgr0)" && exit 1;
+fi
 
-  # Verify that the host data directory is specified
-  if test ! -n "${HOST_DATA_DIR:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Host data directory configuration option (HOST_DATA_DIR) is not specified.$(tput sgr0)" && exit 1;
-  fi
+# Display temporary directory
+echo "Temporary directory:"
+echo "$(tput bold)$(tput setaf 4)$TEMP_DIR$(tput sgr0)";
 
-  # Verify that the user name is specified
-  if test ! -n "${USER_NAME:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Username configuration option (USER_NAME) is not specified.$(tput sgr0)" && exit 1;
-  fi
+# Create configuration directory
+CONFIG_DIR="$TEMP_DIR/config";
+mkdir -p "$CONFIG_DIR";
 
-  # Verify that the GitHub repository is specified
-  if test ! -n "${GITHUB_REPO:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository configuration option (GITHUB_REPO) is not specified.$(tput sgr0)" && exit 1;
-  fi
+# Download configuration files from the GitHub repository
+echo "Downloading configuration files from the GitHub repository...";
+git clone "https://x-access-token:$GITHUB_REPOSITORY_TOKEN@github.com/$GITHUB_REPOSITORY_URL.git" "$CONFIG_DIR";
 
-  # Verify that the GitHub repository access token is specified
-  if test ! -n "${GITHUB_REPO_TOKEN:-}"; then
-    echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token configuration option (GITHUB_REPO_TOKEN) is not specified.$(tput sgr0)" && exit 1;
-  fi
+echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
 
-  # Pods, containers, and secrets are optional
+### Secrets
 
-  ### Temporary Scripts Directory
-  # Note: the non-root user does not have access to a temporary scripts directory created by the root user
+# Secrets initialization script
+SECRETS_INIT_SCRIPT='podman-secrets-init.sh';
 
-  # Create temporary scripts directory
-  echo "Creating temporary scripts directory...";
-  TEMP_SCRIPTS_DIR=$(mktemp --directory);
+# Temporary secrets initialization script
+TEMP_SECRETS_INIT_SCRIPT="$TEMP_DIR/$SECRETS_INIT_SCRIPT";
 
-  # Verify that the temporary scripts directory was successfully created
-  if test ! -d "$TEMP_SCRIPTS_DIR"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Temporary scripts directory could not be created.$(tput sgr0)" && exit 1;
-  fi
+# Download secrets initialization script
+echo "Downloading secrets initialization script...";
+curl --fail --location --silent --output "$TEMP_SECRETS_INIT_SCRIPT" "$SCRIPTS_BASE_URL/$SECRETS_INIT_SCRIPT";
 
-  # Display temporary scripts directory
-  echo "Temporary scripts directory:"
-  echo "$(tput bold)$(tput setaf 4)$TEMP_SCRIPTS_DIR$(tput sgr0)";
+# Verify that the secrets initialization script was successfully downloaded
+if test ! -f "$TEMP_SECRETS_INIT_SCRIPT"; then
+  echo "$(tput bold)$(tput setaf 1)Error: Secrets initialization script could not be downloaded.$(tput sgr0)" && exit 1;
+fi
 
-  # Scripts URL
-  SCRIPTS_URL='https://raw.githubusercontent.com/marcobarrios-fi/podman-vm/main';
+# Execute secrets initialization script 
+# (passes secrets as an environment variable to the script)
+env CONFIG_DIR="$CONFIG_DIR" sh "$TEMP_SECRETS_INIT_SCRIPT";
 
-  ### Socket
+# Delete secrets initialization script
+echo "Deleting secrets initialization script...";
+rm "$TEMP_SECRETS_INIT_SCRIPT";
 
-  # Socket initialization script
-  SOCKET_INIT_SCRIPT='podman-socket-init.sh';
+### Pods
 
-  # Temporary socket initialization script
-  TEMP_SOCKET_INIT_SCRIPT="$TEMP_SCRIPTS_DIR/$SOCKET_INIT_SCRIPT";
+# Pods initialization script
+PODS_INIT_SCRIPT='podman-pods-init.sh';
 
-  # Download socket initialization script
-  echo "Downloading socket initialization script...";
-  curl --fail --location --silent --output "$TEMP_SOCKET_INIT_SCRIPT" "$SCRIPTS_URL/$SOCKET_INIT_SCRIPT";
+# Temporary pods initialization script
+TEMP_PODS_INIT_SCRIPT="$TEMP_DIR/$PODS_INIT_SCRIPT";
 
-  # Verify that the socket initialization script was successfully downloaded
-  if test ! -f "$TEMP_SOCKET_INIT_SCRIPT"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Socket initialization script could not be downloaded.$(tput sgr0)" && exit 1;
-  fi
+# Download pods initialization script
+echo "Downloading pods initialization script...";
+curl --fail --location --silent --output "$TEMP_PODS_INIT_SCRIPT" "$SCRIPTS_BASE_URL/$PODS_INIT_SCRIPT";
 
-  # Execute socket initialization script as the Podman user (passes the user name as an environment variable to the script)
-  env USER_NAME="$USER_NAME" \
-    USER_ID="$USER_ID" \
-    sh "$TEMP_SOCKET_INIT_SCRIPT";
-
-  # Delete socket initialization script
-  echo "Deleting socket initialization script...";
-  rm "$TEMP_SOCKET_INIT_SCRIPT";
-
-  ### Secrets
-
-  # Secrets initialization script
-  SECRETS_INIT_SCRIPT='podman-secrets-init.sh';
-
-  # Temporary secrets initialization script
-  TEMP_SECRETS_INIT_SCRIPT="$TEMP_SCRIPTS_DIR/$SECRETS_INIT_SCRIPT";
-
-  # Download secrets initialization script
-  echo "Downloading secrets initialization script...";
-  curl --fail --location --silent --output "$TEMP_SECRETS_INIT_SCRIPT" "$SCRIPTS_URL/$SECRETS_INIT_SCRIPT";
-
-  # Verify that the secrets initialization script was successfully downloaded
-  if test ! -f "$TEMP_SECRETS_INIT_SCRIPT"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Secrets initialization script could not be downloaded.$(tput sgr0)" && exit 1;
-  fi
-
-  # Execute secrets initialization script (passes secrets as an environment variable to the script)
-  env SECRETS="$SECRETS" \
-    sh "$TEMP_SECRETS_INIT_SCRIPT";
-
-  # Delete secrets initialization script
-  echo "Deleting secrets initialization script...";
-  rm "$TEMP_SECRETS_INIT_SCRIPT";
-
-  ### Temporary Configuration Directory
-
-  # Create temporary configuration directory
-  echo "Creating temporary configuration directory...";
-  TEMP_CONFIG_DIR=$(mktemp --directory);
-
-  # Verify that the temporary configuration was successfully created
-  if test ! -d "$TEMP_CONFIG_DIR"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Temporary configuration directory could not be created.$(tput sgr0)" && exit 1;
-  fi
-
-  # Display temporary configuration directory
-  echo "Temporary configuration directory:"
-  echo "$(tput bold)$(tput setaf 4)$TEMP_CONFIG_DIR$(tput sgr0)";
-
-  # Download GitHub repository
-  echo "Downloading configuration files from GitHub repository...";
-  git clone "https://x-access-token:$GITHUB_REPO_TOKEN@github.com/$GITHUB_REPO.git" "$TEMP_CONFIG_DIR";
-
-  echo "$(tput bold)$(tput setaf 2)Downloading configuration files completed.$(tput sgr0)";
-
-  ### Pods
-
-  # Pods initialization script
-  PODS_INIT_SCRIPT='podman-pods-init.sh';
-
-  # Temporary pods initialization script
-  TEMP_PODS_INIT_SCRIPT="$TEMP_SCRIPTS_DIR/$PODS_INIT_SCRIPT";
-
-  # Download pods initialization script
-  echo "Downloading pods initialization script...";
-  curl --fail --silent --output "$TEMP_PODS_INIT_SCRIPT" "$SCRIPTS_URL/$PODS_INIT_SCRIPT";
-
-  # Verify that the pods initialization script was successfully downloaded
-  if test ! -f "$TEMP_PODS_INIT_SCRIPT"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Pods initialization script could not be downloaded.$(tput sgr0)" && exit 1;
-  fi
-
-  # Execute pods initialization script (passes the domain, host data directory, pods list, temporary scripts directory, and temporary configuration directory as environment variables to the script)
-  env DOMAIN="$DOMAIN" \
-    HOST_DATA_DIR="$HOST_DATA_DIR" \
-    PODS="$PODS" \
-    TEMP_SCRIPTS_DIR="$TEMP_SCRIPTS_DIR" \
-    TEMP_CONFIG_DIR="$TEMP_CONFIG_DIR" \
-    sh "$TEMP_PODS_INIT_SCRIPT";
-
-  # Delete pods initialization script
-  echo "Deleting pods initialization script...";
-  rm "$TEMP_PODS_INIT_SCRIPT";
-
-  ### Containers
-
-  # Containers initialization script
-  CONTAINERS_INIT_SCRIPT='podman-containers-init.sh';
-
-  # Temporary containers initialization script
-  TEMP_CONTAINERS_INIT_SCRIPT="$TEMP_SCRIPTS_DIR/$CONTAINERS_INIT_SCRIPT";
-
-  # Download containers initialization script
-  echo "Downloading containers initialization script...";
-  curl --fail --silent --output "$TEMP_CONTAINERS_INIT_SCRIPT" "$SCRIPTS_URL/$CONTAINERS_INIT_SCRIPT";
-
-  # Verify that the containers initialization script was successfully downloaded
-  if test ! -f "$TEMP_CONTAINERS_INIT_SCRIPT"; then
-    echo "$(tput bold)$(tput setaf 1)Error: Containers initialization script could not be downloaded.$(tput sgr0)" && exit 1;
-  fi
-
-  # Execute containers initialization script (passes the domain, host data directory, containers list, temporary configuration directory, and pod name as environment variables to the script)
-  env DOMAIN="$DOMAIN" \
-    HOST_DATA_DIR="$HOST_DATA_DIR" \
-    CONTAINERS="$CONTAINERS" \
-    TEMP_CONFIG_DIR="$TEMP_CONFIG_DIR" \
-    POD="" \
-    sh "$TEMP_CONTAINERS_INIT_SCRIPT";
-
-  # Delete containers initialization script
-  echo "Deleting containers initialization script...";
-  rm "$TEMP_CONTAINERS_INIT_SCRIPT";
-
-  ### Clear
-
-  # Remove temporary scripts directory
-  echo "Removing temporary scripts directory...";
-  # rm --recursive --force "$TEMP_SCRIPTS_DIR";
-  rm -rf "$TEMP_SCRIPTS_DIR";
-
-  # Remove temporary configuration directory
-  echo "Removing temporary configuration directory...";
-  # rm --recursive --force "$TEMP_CONFIG_DIR";
-  rm -rf "$TEMP_CONFIG_DIR";
-
-  # Remove unused Podman images
-  echo 'Removing unused Podman images...';
-  podman image prune --all --force;
-
-  # List Podman images
-  echo "Podman container images:";
-  podman images;
-
-  echo "$(tput bold)$(tput setaf 2)Podman initialization completed.$(tput sgr0)";
-
-}
-
-podman_init "$@";
+# Verify that the pods initialization script was successfully downloaded
+if test ! -f "$TEMP_PODS_INIT_SCRIPT"; then
+  echo "$(tput bold)$(tput setaf 1)Error: Pods initialization script could not be downloaded.$(tput sgr0)" && exit 1;
+fi
+
+# Execute pods initialization script 
+# (passes configuration directory as an environment variable to the script)
+env CONFIG_DIR="$CONFIG_DIR" sh "$TEMP_PODS_INIT_SCRIPT";
+
+# Delete pods initialization script
+echo "Deleting pods initialization script...";
+rm "$TEMP_PODS_INIT_SCRIPT";
