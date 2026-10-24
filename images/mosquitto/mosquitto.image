@@ -54,9 +54,9 @@ ARG DATA_DIR="/var/lib/$APP"
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
-# Config file build-time variable
+# Configuration file build-time variable
 ARG CONFIG_FILE='/etc/mosquitto/mosquitto.conf'
-# Config file environment variable
+# Configuration file environment variable
 ENV CONFIG_FILE="$CONFIG_FILE"
 
 # Password file build-time variable
