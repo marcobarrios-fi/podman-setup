@@ -75,6 +75,8 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log directory environment variable
 ENV LOG_FILE="$LOG_FILE"
 
+## Database Configuration
+
 # Edition identifiers built-time variable
 # (default value is GeoLite2-Country GeoLite2-City)
 ARG EDITION_IDS='GeoLite2-Country GeoLite2-City GeoLite2-ASN'
