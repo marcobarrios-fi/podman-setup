@@ -6,11 +6,22 @@
 ### Directories
 # Mounted volumes are not available at the build time
 
+# Create application directory
+mkdir -p "$APP_DIR";
+
 # Create data directory
 mkdir -p "$DATA_DIR";
 
-# Create log directory
-mkdir -p "$LOG_DIR";
+if test -n "$LOG_FILE"; then
+  # Set log directory environment variable
+  export LOG_DIR="$(dirname "$LOG_FILE")";
+  # Create the log directory
+  mkdir -p "$LOG_DIR";
+  # Create access log (used by the Nginx web server)
+  touch "$LOG_DIR/access.log";
+  # Create error log (used by the NGINX web server)
+  touch "$LOG_DIR/error.log";
+fi;
 
 # Create uploads directory
 mkdir -p "$DATA_DIR/uploads";
@@ -19,12 +30,6 @@ mkdir -p "$DATA_DIR/uploads";
 
 # Create application database file
 touch "$DATA_DIR/$DB_FILE";
-
-# Create access log file
-touch "$LOG_DIR/access.log";
-
-# Create error log file
-touch "$LOG_DIR/error.log";
 
 ### Permissions
 
@@ -53,6 +58,13 @@ if test -d '/tmp/wordpress'; then
 
   # Delete the temporary directory
   rm -rf '/tmp/wordpress';
+
+  if test -f '/tmp/wordpress-config-template.php'; then
+    # Create configuration file from the configuration template
+    envsubst '${USER} ${GROUP} ${DATA_DIR} ${DB_FILE}' < '/tmp/wordpress-config-template.php' > "$APP_DIR/wp-config.php";
+    # Remove the configuration template
+    rm '/tmp/wordpress-config-template.php';
+  fi
 
   # Plugins, themes, and uploads are stored in the data directory
 
