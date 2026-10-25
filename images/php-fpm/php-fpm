@@ -118,7 +118,8 @@ RUN chmod +x "/usr/local/bin/$APP-init"
 
 ### Ports
 
-# Expose port 9000 (not applicable when using sockets)
+# Expose port 9000 
+# (not applicable when using sockets)
 EXPOSE 9000
 
 ### User
