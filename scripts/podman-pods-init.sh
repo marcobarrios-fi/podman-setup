@@ -36,14 +36,14 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
   cd "$CONFIG_DIR";
 
   # Assign pods as positional arguments
-  set -- "$PODS_DIR/"*.yaml;
+  set -- "$PODS_DIR/"*.json;
 
   # If pods are specified
   if test -e "$1"; then
 
     for POD in "$@"; do
 
-      POD_NAME=$(basename "$POD" '.yaml');
+      POD_NAME=$(basename "$POD" '.json');
 
       # Prompt initializing the pod
       printf "$(tput bold)Initialize pod $POD_NAME? (Yes/No) $(tput sgr0)" && read input;
@@ -52,10 +52,10 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
       if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || test "$input" = "Y" || test "$input" = "y"; then
           
         # Copy pod configuration file to the configuration directory
-        cp "$POD" "$CONFIG_DIR/$POD_NAME.yaml";
+        cp "$POD" "$CONFIG_DIR/$POD_NAME.json";
 
         # Create pod
-        podman kube play --replace --no-pod-prefix --network 'podman' "$POD_NAME.yaml";
+        podman kube play --replace --no-pod-prefix --network 'podman' "$POD_NAME.json";
 
         # Display pod details
         echo "$POD_NAME pod:";
