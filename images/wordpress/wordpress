@@ -18,6 +18,14 @@ LABEL image.app-version='7.1.3'
 LABEL image.app-url='https://wordpress.org/'
 # Application documentation
 LABEL image.app-docs='https://wordpress.org/documentation/'
+# Application database plugin
+LABEL image.app-db-plugin='WordPress SQLite Database Integration'
+# Application database plugin website
+LABEL image.app-db-plugin-url='https://wordpress.org/plugins/sqlite-database-integration/'
+# Application CLI utility
+LABEL image.app-cli='WordPress Command-Line Utility'
+# Application CLI utility website
+LABEL image.app-cli-url='https://make.wordpress.org/cli/'
 
 ### Variables
 
@@ -95,21 +103,16 @@ ARG PHP_FPM_SOCKET='/run/php/php-fpm.sock'
 # PHP-FPM socket environment variable
 ENV PHP_FPM_SOCKET="$PHP_FPM_SOCKET"
 
-# WordPress source URL
+# Source URL build-time variable
 ARG SOURCE_URL='https://wordpress.org/latest.tar.gz'
 
-# WordPress SQLite Database Integration Plugin 
-# (https://wordpress.org/plugins/sqlite-database-integration/)
-
-# WordPress SQLite Database Integration Plugin release information
+# WordPress SQLite Database Integration Plugin release information build-time variable
 ARG SQLITE_DB_RELEASE_INFO='https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/releases/latest'
-# WordPress SQLite Database Integration Plugin source URL
+
+# WordPress SQLite Database Integration Plugin source URL build-time variable
 ARG SQLITE_DB_SOURCE_URL='https://raw.githubusercontent.com/aaemnnosttv/wp-sqlite-db'
 
-# WordPress Command-Line Utility 
-# (https://make.wordpress.org/cli/)
-
-# WordPress Command-Line Utility source URL
+# WordPress Command-Line Utility source URL build-time variable
 ARG CLI_SOURCE_URL='https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar'
 
 ### Users
@@ -166,6 +169,7 @@ RUN wget -O 'wp-sqlite-db-latest.json' "$SQLITE_DB_RELEASE_INFO" && VERSION="$(j
 RUN wget -O 'wp-cli.phar' "$CLI_SOURCE_URL" && mv 'wp-cli.phar' '/usr/local/bin/wp' && chmod +x '/usr/local/bin/wp'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ### Scripts
 
