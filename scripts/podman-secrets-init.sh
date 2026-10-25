@@ -31,15 +31,15 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
     echo "$(tput bold)$(tput setaf 1)Error: Secrets configuration directory does not exist.$(tput sgr0)" && exit 1;
   fi
 
-  # Assign secrets as positional arguments
+  # Assign secret configuration files as positional arguments
   set -- "$SECRETS_DIR/"*.yaml;
 
-  # If secrets are specified
+  # If secret configuration files exist
   if test -e "$1"; then
 
-    for SECRET_CONFIG_FILE in "$@"; do
+    for SECRET_CONFIG_TEMPLATE in "$@"; do
 
-      SECRET_NAME=$(basename "$SECRET_CONFIG_FILE" '.yaml');
+      SECRET_NAME=$(basename "$SECRET_CONFIG_TEMPLATE" '-template.yaml');
 
       # If the secret does not exist
       if ! podman secret exists "$SECRET_NAME"; then
@@ -54,7 +54,7 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
         TEMP_CONFIG_FILE=$(mktemp);
 
         # Substitute the secret value in the configuration file template
-        envsubst < "$SECRET_CONFIG_FILE" > "$TEMP_CONFIG_FILE";
+        envsubst < "$SECRET_CONFIG_TEMPLATE" > "$TEMP_CONFIG_FILE";
 
         # Unset secret environment variable
         unset SECRET;
