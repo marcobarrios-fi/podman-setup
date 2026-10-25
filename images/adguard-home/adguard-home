@@ -92,6 +92,7 @@ COPY '/filters/'*.conf '/tmp/filters/'
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ### Scripts
 
