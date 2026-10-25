@@ -25,6 +25,27 @@ fi
 
 ### Configuration
 
+if test -f '/tmp/nginx-config-template.conf'; then
+  # Create configuration file from the configuration template
+  envsubst < '/tmp/nginx-config-template.conf' > '/etc/nginx/nginx.conf';
+  # Delete the configuration template
+  rm '/tmp/nginx-config-template.conf';
+fi
+
+if test -f '/tmp/php-fpm-config-template.conf'; then
+  # Create PHP-FPM configuration file from the configuration template
+  envsubst '${PHP_FPM_SOCKET}' < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf';
+  # Delete the configuration template
+  rm '/tmp/php-fpm-config-template.conf';
+fi
+
+if test -f '/tmp/geoip-config-template.conf'; then
+  # Create GeoIP configuration file from the configuration template
+  envsubst '${GEOIP_COUNTRY_DB} ${GEOIP_CITY_DB}' < '/tmp/geoip-config-template.conf' > '/etc/nginx/geoip.conf';
+  # Delete the configuration template
+  rm '/tmp/geoip-config-template.conf';
+fi
+
 if test -d '/tmp/hosts'; then
   # Delete existing host configuration files
   rm -rf "$DATA_DIR/hosts"/*;
