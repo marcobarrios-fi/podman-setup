@@ -51,11 +51,6 @@ ARG DATA_DIR="$APP_DIR/data"
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
-# Configuration file build-time variable
-ARG CONFIG_FILE="$DATA_DIR/configuration.yaml"
-# Configuration file environment variable
-ENV CONFIG_FILE="$CONFIG_FILE"
-
 # Log file build-time variable
 ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
@@ -121,11 +116,8 @@ RUN apk update && apk add --no-cache gettext-envsubst nodejs npm && npm install 
 # Set container host name
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
-# Set Zigbee2MQTT data directory environment variable
-ENV DATA="$DATA_DIR"
-
 # Copy configuration template to the temporary directory
-COPY 'zigbee2mqtt-config-template.yaml' '/tmp/config-template.yaml'
+COPY 'zigbee2mqtt-config-template.yaml' '/tmp/zigbee2mqtt-config-template.yaml'
 
 ### Secrets
 # Secrets are not available at the build time
