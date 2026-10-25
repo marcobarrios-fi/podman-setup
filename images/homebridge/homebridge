@@ -140,6 +140,7 @@ ENV UI_BIN='/usr/local/lib/node_modules/homebridge-config-ui-x/dist/bin/standalo
 COPY 'homebridge-config-template.json' '/tmp/config-template.json'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ### Scripts
 
