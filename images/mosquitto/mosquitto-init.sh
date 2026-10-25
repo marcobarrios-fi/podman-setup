@@ -9,11 +9,16 @@
 # Create data directory
 mkdir -p "$DATA_DIR";
 
+# Set data directory ownership
+chown "$USER:$GROUP" "$DATA_DIR";
+
 if test -n "$LOG_FILE"; then
   # Create log directory
   mkdir -p "$(dirname "$LOG_FILE")";
   # Create log file
   touch "$LOG_FILE";
+  # Set log file ownership
+  chown "$USER:$GROUP" "$LOG_FILE";
 fi
 
 ### Secrets
@@ -29,11 +34,11 @@ fi
 # Create password file
 mosquitto_passwd -b -c "$PASSWORD_FILE" "$MQTT_USERNAME" "$MQTT_PASSWORD";
 
-# Set password file permissions
-chmod 700 "$PASSWORD_FILE";
-
 # Set password file ownership
 chown "$USER:$GROUP" "$PASSWORD_FILE";
+
+# Set password file permissions
+chmod 700 "$PASSWORD_FILE";
 
 ### Configuration
 
