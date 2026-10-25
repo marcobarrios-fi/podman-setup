@@ -110,6 +110,7 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 COPY 'matterbridge-zigbee2mqtt-plugin-config-template.json' '/tmp/zigbee2mqtt-plugin-config-template.json'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ### Scripts
 
