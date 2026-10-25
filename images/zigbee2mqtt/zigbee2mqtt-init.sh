@@ -9,16 +9,20 @@
 # Create data directory
 mkdir -p "$DATA_DIR";
 
-# Create log directory
 if test -n "$LOG_FILE"; then
-  mkdir -p "$(dirname "$LOG_FILE")";
+  # Set log directory environment variable
+  export LOG_DIR="$(dirname "$LOG_FILE")";
+  # Set log file environment variable
+  export LOG_FILE="$(basename "$LOG_FILE")";
+  # Create log directory
+  mkdir -p "$LOG_DIR";
 fi
 
 ### Secrets
 # Secrets are not available at the build time
 
-# Export MQTT password as an environment variable
 if test -s '/run/secrets/mqtt-password'; then
+  # Set MQTT password environment variable
   export MQTT_PASSWORD=$(cat '/run/secrets/mqtt-password');
 else
   echo 'Warning: MQTT password secret is not specified' > '/dev/stderr';
@@ -26,16 +30,15 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/config-template.yaml'; then
+if test -f '/tmp/zigbee2mqtt-config-template.yaml'; then
   # Create configuration file from the configuration template
-  envsubst < '/tmp/config-template.yaml' > "$CONFIG_FILE";
+  envsubst < '/tmp/zigbee2mqtt-config-template.yaml' > "$DATA_DIR/configuration.yaml";
   # Delete configuration template
-  rm '/tmp/config-template.yaml';
+  rm '/tmp/zigbee2mqtt-config-template.yaml';
 fi
 
+# Set Zigbee2MQTT data directory environment variable (used by Zigbee2MQTT to locate its data directory)
+export ZIGBEE2MQTT_DATA="$DATA_DIR";
+
 # Start Zigbee2MQTT
-if test -n "$LOG_FILE"; then
-  exec zigbee2mqtt --config "$CONFIG_FILE" --log-level 'info' --log-file "$LOG_FILE";
-else
-  exec zigbee2mqtt --config "$CONFIG_FILE" --log-level 'info';
-fi
+exec zigbee2mqtt;
