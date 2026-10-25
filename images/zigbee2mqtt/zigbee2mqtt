@@ -61,6 +61,8 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
+## Adapter Configuration
+
 # Adapter type (serial adapter) build-time variable
 ARG ADAPTER_TYPE='zstack'
 # Adapter type environment variable
@@ -71,12 +73,14 @@ ARG ADAPTER_PORT='/dev/ttyACM0'
 # Adapter port environment variable
 ENV ADAPTER_PORT="$ADAPTER_PORT"
 
+## Frontend Configuration
+
 # Frontend port build-time variable
 ARG FRONTEND_PORT='8080'
 # Frontend port environment variable
 ENV FRONTEND_PORT="$FRONTEND_PORT"
 
-## MQTT Variables
+## MQTT Configuration
 
 # MQTT server build-time variable
 ARG MQTT_SERVER='localhost'
