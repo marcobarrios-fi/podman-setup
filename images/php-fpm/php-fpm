@@ -4,6 +4,8 @@
 # Latest Alpine release
 FROM alpine:latest
 
+### Metadata
+
 # Container image version
 LABEL version='1.0.0'
 # Application name
@@ -11,7 +13,7 @@ LABEL image.app-name='PHP-FPM'
 # Container image description
 LABEL description='PHP FastCGI process manager for NGINX'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='8.4.4'
 # Application website
@@ -31,19 +33,23 @@ ARG DOMAIN='localhost'
 # Domain environment variable
 ENV DOMAIN="$DOMAIN"
 
-## Group ID and group name
+## Group Configuration
 
 # Group identification build-time variable
 ARG GROUP_ID='101'
+# Group identification environment variable
+ENV GROUP_ID="$GROUP_ID"
 # Group name build-time variable
 ARG GROUP='web-server'
 # Group name environment variable
 ENV GROUP="$GROUP"
 
-## User ID and user name
+## User Configuration
 
 # User identification build-time variable
 ARG USER_ID='101'
+# User identification environment variable
+ENV USER_ID="$USER_ID"
 # User name build-time variable
 ARG USER="$APP"
 # User name environment variable
@@ -86,7 +92,7 @@ RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --ui
 
 ### Packages
 
-# Install GNU Gettext environment substitution, PHP hypertext preprocessor, and PHP command-line interface (CLI), PHP FastCGI process manager (FPM), and PHP client URL extensions
+# Install GNU Gettext environment substitution, PHP hypertext preprocessor, PHP command-line interface (CLI), PHP FastCGI process manager (FPM), and PHP client URL extensions
 RUN apk update && apk add --no-cache gettext-envsubst "$PHP_VERSION" "$PHP_VERSION-cli" "$PHP_VERSION-fpm" "$PHP_VERSION-curl"
 
 ### Symbolic Links
