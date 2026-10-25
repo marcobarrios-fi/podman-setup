@@ -110,6 +110,7 @@ COPY 'mosquitto-config-template.conf' '/tmp/mosquitto-config-template.conf'
 RUN envsubst < '/tmp/mosquitto-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/mosquitto-config-template.conf'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ## Password file
 
