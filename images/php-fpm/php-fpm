@@ -66,7 +66,7 @@ ENV LOG_FILE="$LOG_FILE"
 
 ## Socket Configuration
 
-# Socket build-time variable 
+# Socket build-time variable
 # (default value is /run/php/php8.4-fpm.sock)
 ARG SOCKET='/run/php/php-fpm.sock'
 # PHP-FPM socket environment variable
@@ -108,8 +108,7 @@ RUN rm '/etc/php/php-fpm.d/www.conf'
 # Copy configuration template to the temporary directory
 COPY 'php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
 
-# Create configuration file from the configuration template and delete the template
-# RUN envsubst < '/tmp/php-fpm-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/php-fpm-config-template.conf'
+# The configuration file is created from the configuration template by the initialization script
 
 # Rename Client URL extension configuration file (does not impact functionality)
 RUN mv '/etc/php/conf.d/00_curl.ini' '/etc/php/conf.d/curl.ini'
