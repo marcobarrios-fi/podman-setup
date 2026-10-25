@@ -1,0 +1,111 @@
+# marcobarrios.fi Geoipupdate container image
+# marcobarrios.fi-geoipupdate
+
+# Latest Alpine release
+FROM alpine:latest AS build
+
+### Packages
+
+# Install Go
+RUN apk add --no-cache go
+
+# Install latest version of geoipupdate using Go
+RUN go install 'github.com/maxmind/geoipupdate/v7/cmd/geoipupdate@latest'
+
+# Move geoipupdate to the /usr/local/bin directory
+RUN mv ~/go/bin/geoipupdate '/usr/local/bin/'
+
+# Latest Alpine release
+FROM alpine:latest
+
+# Container image version
+LABEL version='1.0.0'
+# Container image description
+LABEL description='Updates MaxMind GeoIP and GeoLite2 databases using Geoipupdate'
+# Operating system version
+LABEL image.os-version='3.21.3'
+# Application name
+LABEL image.app-name='geoipupdate'
+# Application version
+LABEL image.app-version='7.1.0'
+# Application URL
+LABEL image.app-url='https://dev.maxmind.com/geoip/updating-databases/'
+# Application GitHub page
+LABEL image.app-github='https://github.com/maxmind/geoipupdate/'
+# Application documentation
+LABEL image.app-docs='https://github.com/maxmind/geoipupdate/blob/main/doc/GeoIP.conf.md'
+
+# See also DB-IP free IP geolocation databases
+# https://db-ip.com/db/lite.php
+
+### Built-time variables
+
+# Group ID built-time variable
+ARG GEOIPUPDATE_GROUP_ID='101'
+# Default group name built-time variable
+ARG DEFAULT_GEOIPUPDATE_GROUP='www-data'
+# User ID built-time variable
+ARG GEOIPUPDATE_USER_ID='101'
+# Default user name built-time variable
+ARG DEFAULT_GEOIPUPDATE_USER='geoipupdate'
+
+# Default geo-IP database directory built-time variable
+ARG DEFAULT_GEOIP_DB_DIR='/usr/local/share/GeoIP'
+
+# Default edition IDs built-time variable
+ARG DEFAULT_GEOIPUPDATE_EDITION_IDS='GeoLite2-ASN GeoLite2-City GeoLite2-Country'
+
+# Default lowercase filenames built-time variable
+ARG DEFAULT_GEOIPUPDATE_LOWERCASE_FILENAMES='yes'
+
+### Users
+
+# Create user group and add user to the group
+RUN if test -z "$GEOIPUPDATE_GROUP"; then export GEOIPUPDATE_GROUP="$DEFAULT_GEOIPUPDATE_GROUP"; fi && \ 
+getent group "$GEOIPUPDATE_GROUP" || addgroup --gid "$GEOIPUPDATE_GROUP_ID" "$GEOIPUPDATE_GROUP" && \
+if test -z "$GEOIPUPDATE_USER"; then export GEOIPUPDATE_USER="$DEFAULT_GEOIPUPDATE_USER"; fi && \
+adduser --uid "$GEOIPUPDATE_USER_ID" --system --ingroup "$GEOIPUPDATE_GROUP" "$GEOIPUPDATE_USER"
+
+### Directories
+
+# Create geo-IP database directory
+# (used by geoipupdate-run)
+RUN if test -z "$GEOIP_DB_DIR"; then export GEOIP_DB_DIR="$DEFAULT_GEOIP_DB_DIR"; fi && mkdir -p "$GEOIP_DB_DIR"
+ENV GEOIP_DB_DIR="$GEOIP_DB_DIR"
+
+# Set Geoipupdate database directory environment variable
+# (used by geoipupdate)
+ENV GEOIPUPDATE_DB_DIR="$GEOIP_DB_DIR"
+
+### Applications
+
+# Copy application from the build stage
+COPY --from=build '/usr/local/bin/geoipupdate' '/usr/local/bin/'
+
+### Configuration
+# (default configuration file is /usr/local/etc/GeoIP.conf)
+
+# Set edition IDs environment variable
+RUN if test -z "$GEOIPUPDATE_EDITION_IDS"; then export GEOIPUPDATE_EDITION_IDS="$DEFAULT_GEOIPUPDATE_EDITION_IDS"; fi
+ENV GEOIPUPDATE_EDITION_IDS="$GEOIPUPDATE_EDITION_IDS"
+
+# Set lowercase filenames environment variable
+RUN if test -z "$GEOIPUPDATE_LOWERCASE_FILENAMES"; then export GEOIPUPDATE_LOWERCASE_FILENAMES="$DEFAULT_GEOIPUPDATE_LOWERCASE_FILENAMES"; fi
+ENV GEOIPUPDATE_LOWERCASE_FILENAMES="$GEOIPUPDATE_LOWERCASE_FILENAMES"
+
+### Scripts
+
+# Copy geoipupdate-run shell script
+COPY geoipupdate-run.sh '/usr/local/bin/geoipupdate-run'
+# Make geoipupdate-run shell script executable
+RUN chmod +x '/usr/local/bin/geoipupdate-run'
+
+# Schedule geoipupdate-run shell script to run daily
+# (copy geoipupdate-run to the /etc/periodic/daily directory)
+RUN cp '/usr/local/bin/geoipupdate-run' '/etc/periodic/daily/'
+
+# Switch to container user
+# USER "$GEOIPUPDATE_USER"
+
+# Run geoipupdate-run shell script
+ENTRYPOINT geoipupdate-run
