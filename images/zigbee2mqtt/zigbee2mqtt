@@ -1,0 +1,145 @@
+# marcobarrios.fi Zigbee2MQTT container image
+# marcobarrios.fi-zigbee2mqtt
+
+# Latest Alpine release
+FROM alpine:latest
+
+### Metadata
+
+# Container image version
+LABEL version='1.0.0'
+# Application name
+LABEL image.app-name='Zigbee2MQTT'
+# Container image description
+LABEL description='Zigbee to MQTT (Message Queuing Telemetry Transport) bridge'
+# Operating system version
+LABEL image.os-version='3.21.3'
+# Application version
+LABEL image.app-version='2.4.0'
+# Application website
+LABEL image.app-url='https://www.zigbee2mqtt.io/'
+
+### Variables
+
+# App build-time variable
+ARG APP='zigbee2mqtt'
+# App environment variable
+ENV APP="$APP"
+
+# Domain build-time variable
+ARG DOMAIN='localhost'
+# Domain environment variable
+ENV DOMAIN="$DOMAIN"
+
+# Group identification build-time variable
+ARG GROUP_ID='101'
+# Group name build-time variable
+ARG GROUP="$APP"
+
+# User identification build-time variable
+ARG USER_ID='101'
+# User name build-time variable
+ARG USER="$APP"
+
+# Application directory build-time variable
+ARG APP_DIR='/usr/local/lib/node_modules/zigbee2mqtt'
+# Application directory environment variable
+ENV APP_DIR="$APP_DIR"
+
+# Data directory build-time variable
+ARG DATA_DIR="$APP_DIR/data"
+# Data directory environment variable
+ENV DATA_DIR="$DATA_DIR"
+
+# Configuration file build-time variable
+ARG CONFIG_FILE="$DATA_DIR/configuration.yaml"
+# Configuration file environment variable
+ENV CONFIG_FILE="$CONFIG_FILE"
+
+# Log file build-time variable
+ARG LOG_FILE="/var/log/$APP.log"
+# Log file environment variable
+ENV LOG_FILE="$LOG_FILE"
+
+# Adapter type (serial adapter) build-time variable
+ARG ADAPTER_TYPE='zstack'
+# Adapter type environment variable
+ENV ADAPTER_TYPE="$ADAPTER_TYPE"
+
+# Adapter port (address) build-time variable
+ARG ADAPTER_PORT='/dev/ttyACM0'
+# Adapter port environment variable
+ENV ADAPTER_PORT="$ADAPTER_PORT"
+
+# Frontend port build-time variable
+ARG FRONTEND_PORT='8080'
+# Frontend port environment variable
+ENV FRONTEND_PORT="$FRONTEND_PORT"
+
+## MQTT Variables
+
+# MQTT server build-time variable
+ARG MQTT_SERVER='localhost'
+# MQTT server environment variable
+ENV MQTT_SERVER="$MQTT_SERVER"
+
+# MQTT port build-time variable
+ARG MQTT_PORT='1883'
+# MQTT port environment variable
+ENV MQTT_PORT="$MQTT_PORT"
+
+# MQTT base topic build-time variable 
+ARG MQTT_BASE_TOPIC='zigbee2mqtt'
+# MQTT base topic environment variable
+ENV MQTT_BASE_TOPIC="$MQTT_BASE_TOPIC"
+
+# MQTT username build-time variable
+# (authentication is disabled by default)
+ARG MQTT_USERNAME='mqtt'
+# MQTT username environment variable
+ENV MQTT_USERNAME="$MQTT_USERNAME"
+
+### Users
+
+# Create user group and add user to the group
+RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --uid "$USER_ID" --system --ingroup "$GROUP" "$USER"
+
+### Packages
+
+# Install GNU Gettext Environment Substitution, Node.js JavaScript runtime environment, Node Package Manager (NPM), and Zigbee2MQTT using NPM
+RUN apk update && apk add --no-cache gettext-envsubst nodejs npm && npm install --global --omit=dev zigbee2mqtt
+
+### Directories
+# Mounted volumes are not available at the build time
+
+### Configuration
+
+# Set container host name
+RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
+
+# Set Zigbee2MQTT data directory environment variable
+ENV DATA="$DATA_DIR"
+
+# Copy configuration template to the temporary directory
+COPY 'zigbee2mqtt-config-template.yaml' '/tmp/config-template.yaml'
+
+### Secrets
+
+### Scripts
+
+# Copy initialization script
+COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
+
+# Make the initialization script executable
+RUN chmod +x "/usr/local/bin/$APP-init"
+
+### Ports
+
+# EXPOSE "$FRONTEND_PORT"
+
+### User
+
+# Switch to container user
+# USER "$USER"
+
+ENTRYPOINT ["zigbee2mqtt-init"]
