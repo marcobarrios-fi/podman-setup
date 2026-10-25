@@ -54,7 +54,7 @@ ARG DATA_DIR="/var/lib/$APP"
 ENV DATA_DIR="$DATA_DIR"
 
 # Configuration file build-time variable
-ARG CONFIG_FILE="$DATA_DIR/config.yaml"
+ARG CONFIG_FILE="/etc/$APP.yaml"
 # Configuration file environment variable
 ENV CONFIG_FILE="$CONFIG_FILE"
 
@@ -63,11 +63,6 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
-## Source Configuration
-
-# Source URL build-time variable
-ARG SOURCE_URL='https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_amd64.tar.gz'
-
 ### Users
 
 # Create user group and add user to the group
@@ -75,11 +70,14 @@ RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --ui
 
 ### Packages
 
-# Install GNU Gettext environment substitution
-RUN apk update && apk add --no-cache gettext-envsubst
+# Install GNU Gettext environment substitution and AdGuard Home
+RUN apk update && apk add --no-cache gettext-envsubst adguardhome
 
 # Download the latest version of AdGuard Home, extract the archive, move the application to the binaries directory, make the application executable, delete the temporary directory, and delete the downloaded archive
-RUN wget -O "$APP.tar.gz" "$SOURCE_URL" && tar -xzf "$APP.tar.gz" && mv 'AdGuardHome/AdGuardHome' "/usr/local/bin/$APP" && chmod +x "/usr/local/bin/$APP" && rm -rf 'AdGuardHome' && rm "$APP.tar.gz"
+# RUN wget -O "$APP.tar.gz" "$SOURCE_URL" && tar -xzf "$APP.tar.gz" && mv 'AdGuardHome/AdGuardHome' "/usr/local/bin/$APP" && chmod +x "/usr/local/bin/$APP" && rm -rf 'AdGuardHome' && rm "$APP.tar.gz"
+
+# Rename the AdGuard Home binary to match the application name
+RUN mv "/usr/bin/adguardhome" "/usr/local/bin/$APP"
 
 ### Directories
 # Mounted volumes are not available at the build time
@@ -87,7 +85,7 @@ RUN wget -O "$APP.tar.gz" "$SOURCE_URL" && tar -xzf "$APP.tar.gz" && mv 'AdGuard
 ### Configuration
 
 # Copy configuration template to the temporary directory
-COPY 'adguard-home-config.yaml' '/tmp/config.yaml'
+COPY 'adguard-home-config.yaml' '/tmp/adguard-home-config.yaml'
 
 # Copy filters to the temporary directory
 COPY '/filters/'*.conf '/tmp/filters/'
