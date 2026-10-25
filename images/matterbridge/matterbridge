@@ -97,9 +97,6 @@ RUN npm install --global --omit=dev matterbridge
 # Install Zigbee2MQTT plugin
 RUN npm install --global matterbridge-zigbee2mqtt
 
-# Add Zigbee2MQTT plugin to Matterbridge
-RUN matterbridge --add matterbridge-zigbee2mqtt
-
 ### Directories
 # Mounted volumes are not available at the build time
 
