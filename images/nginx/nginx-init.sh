@@ -53,5 +53,8 @@ mkdir -p "$SITES_DIR/localhost/public";
 # Todo: Consider moving the logs to the /mnt/data/logs directory
 mkdir -p "$SITES_DIR/localhost/logs";
 
+# Start cron daemon
+crond;
+
 # Start NGINX
 exec nginx;
