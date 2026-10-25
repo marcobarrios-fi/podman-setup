@@ -12,10 +12,9 @@ mkdir -p "$DATA_DIR";
 if test -n "$LOG_FILE"; then
   # Create log directory
   mkdir -p "$(dirname "$LOG_FILE")";
+  # Create log file
+  touch "$LOG_FILE";
 fi
-
-# Create log file
-touch "$LOG_FILE";
 
 ### Secrets
 # Secrets are not available at the build time.
@@ -29,11 +28,11 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/config-template.json'; then
+if test -f '/tmp/homebridge-config-template.json'; then
   # Create configuration file from the configuration template
-  envsubst < '/tmp/config-template.json' > "$DATA_DIR/config.json";
+  envsubst < '/tmp/homebridge-config-template.json' > "$DATA_DIR/config.json";
   # Delete configuration template
-  rm '/tmp/config-template.json';
+  rm '/tmp/homebridge-config-template.json';
 fi 
 
 # Start Homebridge and Homebridge Config UI X
