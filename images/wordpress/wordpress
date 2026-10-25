@@ -46,7 +46,7 @@ ARG GROUP_ID='101'
 # Group identification environment variable
 ENV GROUP_ID="$GROUP_ID"
 # Group name build-time variable
-ARG GROUP="$APP"
+ARG GROUP='web-server'
 # Group name environment variable
 ENV GROUP="$GROUP"
 
@@ -153,8 +153,11 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 # Copy PHP-FPM configuration template to the temporary directory
 COPY 'wordpress-php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
 
-# Delete the default PHP-FPM configuration file, create configuration file from the configuration template, and delete the template
-RUN rm '/etc/php/php-fpm.d/www.conf' && envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/php/php-fpm.d/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
+# Delete the default PHP-FPM configuration file
+RUN rm '/etc/php/php-fpm.d/www.conf'
+
+# Create configuration file from the configuration template and delete the template
+# RUN envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/php/php-fpm.d/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
 
 ## WordPress (WP)
 
