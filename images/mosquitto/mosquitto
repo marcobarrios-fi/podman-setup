@@ -13,7 +13,7 @@ LABEL image.app-name='Mosquitto'
 # Container image description
 LABEL description='MQTT (Message Queuing Telemetry Transport) broker'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='2.0.20'
 # Application website
@@ -91,7 +91,7 @@ RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --ui
 
 ### Packages
 
-# Install GNU Gettext evironment substitution and Mosquitto MQTT broker
+# Install GNU Gettext environment substitution and Mosquitto MQTT broker
 RUN apk update && apk add --no-cache gettext-envsubst mosquitto
 
 ### Directories
@@ -109,7 +109,7 @@ RUN rm '/etc/mosquitto/mosquitto.conf'
 COPY 'mosquitto-config-template.conf' '/tmp/mosquitto-config-template.conf'
 
 # Create configuration file from the Mosquitto configuration template and delete the configuration template
-RUN envsubst < '/tmp/mosquitto-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/mosquitto-config-template.conf'
+# RUN envsubst < '/tmp/mosquitto-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/mosquitto-config-template.conf'
 
 ### Secrets
 # Secrets are not available at the build time
