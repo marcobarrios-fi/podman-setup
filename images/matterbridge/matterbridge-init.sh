@@ -34,5 +34,8 @@ if test -f '/tmp/zigbee2mqtt-plugin-config-template.json'; then
   rm '/tmp/zigbee2mqtt-plugin-config-template.json';
 fi
 
+# Add Zigbee2MQTT plugin to Matterbridge
+matterbridge --homedir "$DATA_DIR" --add matterbridge-zigbee2mqtt
+
 # Start Matterbridge
 exec matterbridge --homedir "$DATA_DIR" --frontend "$FRONTEND_PORT";
