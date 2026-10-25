@@ -25,6 +25,8 @@ mkdir -p "$SSL_CERTS_DIR";
 if test -s '/run/secrets/cloudflare-api-token'; then
   # Set Cloudflare API token environment variable
   export CLOUDFLARE_API_TOKEN="$(cat '/run/secrets/cloudflare-api-token')";
+else
+  echo 'Error: Cloudflare API token secret is not specified' > '/dev/stderr';
 fi
 
 if test -f '/tmp/cloudflare-dns-template.ini'; then
@@ -42,6 +44,8 @@ fi
 if test -s '/run/secrets/digitalocean-api-token'; then
   # Set DigitalOcean API token environment variable
   export DIGITALOCEAN_API_TOKEN="$(cat '/run/secrets/digitalocean-api-token')";
+else
+  echo 'Error: DigitalOcean API token secret is not specified' > '/dev/stderr';
 fi
 
 if test -f '/tmp/digitalocean-dns-template.ini'; then
