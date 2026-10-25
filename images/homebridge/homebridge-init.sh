@@ -9,8 +9,10 @@
 # Create data directory
 mkdir -p "$DATA_DIR";
 
-# Create log directory
-mkdir -p "$(dirname "$LOG_FILE")";
+if test -n "$LOG_FILE"; then
+  # Create log directory
+  mkdir -p "$(dirname "$LOG_FILE")";
+fi
 
 # Create log file
 touch "$LOG_FILE";
