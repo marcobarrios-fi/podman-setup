@@ -24,11 +24,9 @@ fi
 
 ### Configuration
 
-if test -f '/tmp/config.yaml'; then
-  # Create configuration file from the configuration template
-  envsubst < '/tmp/config.yaml' > "$CONFIG_FILE";
-  # Delete configuration template
-  rm '/tmp/config.yaml';
+if test -f '/tmp/adguard-home-config.yaml'; then
+  # Move configuration file to the configuration file location
+  mv '/tmp/adguard-home-config.yaml' "$CONFIG_FILE";
 fi
 
 if test -d '/tmp/filters'; then
@@ -42,7 +40,7 @@ fi
 
 # Run AdGuard Home
 if test -n "$LOG_FILE"; then
-  exec adguard-home --config "$CONFIG_FILE" --work-dir "$APP_DIR" --logfile "$LOG_FILE";
+  exec "$APP" --config "$CONFIG_FILE" --work-dir "$APP_DIR" --logfile "$LOG_FILE";
 else
-  exec adguard-home --config "$CONFIG_FILE" --work-dir "$APP_DIR";
+  exec "$APP" --config "$CONFIG_FILE" --work-dir "$APP_DIR";
 fi
