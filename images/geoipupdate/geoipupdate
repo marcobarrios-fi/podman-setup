@@ -2,6 +2,20 @@
 # marcobarrios.fi-geoipupdate
 
 # Latest Alpine release
+FROM alpine:latest AS build
+
+### Packages
+
+# Install Go programming language
+RUN apk add --no-cache go
+
+# Install latest version of GeoIP Update using Go
+RUN go install 'github.com/maxmind/geoipupdate/v8/cmd/geoipupdate@latest'
+
+# Move GeoIP Update binary to the binaries directory
+RUN mv ~/go/bin/geoipupdate '/usr/local/bin/'
+
+# Latest Alpine release
 FROM alpine:latest
 
 # Container image version
@@ -47,14 +61,9 @@ ARG USER_ID='101'
 ARG USER="$APP"
 
 # Data directory build-time variable
-ARG DATA_DIR="/var/lib/$APP"
+ARG DATA_DIR='/usr/local/share/GeoIP'
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
-
-# Database directory build-time variable
-ARG DATABASE_DIR='/usr/local/share/GeoIP'
-# Database directory environment variable
-ENV DATABASE_DIR="$DATABASE_DIR"
 
 # Configuration file build-time variable
 ARG CONFIG_FILE='/usr/local/etc/GeoIP.conf'
@@ -67,12 +76,13 @@ ARG LOG_FILE="/var/log/$APP.log"
 ENV LOG_FILE="$LOG_FILE"
 
 # Edition identifiers built-time variable
-ARG EDITION_IDS='GeoLite2-ASN GeoLite2-City GeoLite2-Country'
+# (default value is GeoLite2-Country GeoLite2-City)
+ARG EDITION_IDS='GeoLite2-Country GeoLite2-City GeoLite2-ASN'
 # Edition identifiers environment variable
 ENV EDITION_IDS="$EDITION_IDS"
 
 # Lowercase filenames option built-time variable
-ARG LOWERCASE_FILENAMES='yes'
+ARG LOWERCASE_FILENAMES='no'
 # Lowercase filenames option environment variable
 ENV LOWERCASE_FILENAMES="$LOWERCASE_FILENAMES"
 
@@ -86,30 +96,30 @@ RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --ui
 # Install GNU Gettext environment substitution
 RUN apk update && apk add --no-cache gettext-envsubst
 
+# Copy GeoIP Update binary from the build stage
+COPY --from=build '/usr/local/bin/geoipupdate' '/usr/local/bin/'
+
 ### Directories
 # Mounted volumes are not available at the build time
 
-# Create GeoIP database directory
-RUN mkdir -p "$DATABASE_DIR"
-
-### Applications
-
 ### Configuration
-# (default configuration file is /usr/local/etc/GeoIP.conf)
+
+# Copy configuration template to the temporary directory
+COPY 'geoipupdate-config-template.conf' '/tmp/geoipupdate-config-template.conf'
 
 ### Scripts
 
-# Copy geoipupdate-run shell script
-COPY geoipupdate-run.sh '/usr/local/bin/geoipupdate-run'
-# Make geoipupdate-run shell script executable
-RUN chmod +x '/usr/local/bin/geoipupdate-run'
+# Copy initialization script
+COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
 
-# Schedule geoipupdate-run shell script to run daily
-# (copy geoipupdate-run to the /etc/periodic/daily directory)
-RUN cp '/usr/local/bin/geoipupdate-run' '/etc/periodic/daily/'
+# Make the initialization script executable and schedule it to run weekly
+RUN chmod +x "/usr/local/bin/$APP-init" && cp "/usr/local/bin/$APP-init" '/etc/periodic/weekly/'
+
+### Ports
+
+### User
 
 # Switch to container user
-# USER "$GEOIPUPDATE_USER"
+# USER "$USER"
 
-# Run geoipupdate-run shell script
-ENTRYPOINT geoipupdate-run
+ENTRYPOINT ["geoipupdate-init"]
