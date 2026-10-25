@@ -61,6 +61,5 @@ fi
 # Start Certbot
 certbot-exec;
 
-# Keep the container running indefinitely
-# (necessary for keeping the container alive for scheduled tasks)
-exec sleep infinity;
+# Start cron daemon
+exec crond -f;
