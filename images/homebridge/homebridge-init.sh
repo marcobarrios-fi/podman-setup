@@ -22,7 +22,7 @@ if test -s '/run/secrets/mqtt-password'; then
   # Set MQTT password environment variable
   export MQTT_PASSWORD=$(cat '/run/secrets/mqtt-password');
 else
-  echo 'Error: MQTT password secret is not specified' > '/dev/stderr';
+  echo 'Warning: MQTT password secret is not specified' > '/dev/stderr';
 fi
 
 ### Configuration
