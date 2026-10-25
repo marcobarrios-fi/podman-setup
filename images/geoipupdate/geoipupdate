@@ -1,4 +1,4 @@
-# marcobarrios.fi Geoipupdate container image
+# marcobarrios.fi GeoIP Update container image
 # marcobarrios.fi-geoipupdate
 
 # Latest Alpine release
@@ -18,6 +18,8 @@ RUN mv ~/go/bin/geoipupdate '/usr/local/bin/'
 # Latest Alpine release
 FROM alpine:latest
 
+### Metadata
+
 # Container image version
 LABEL version='1.0.0'
 # Application name
@@ -25,7 +27,7 @@ LABEL image.app-name='GeoIP Update'
 # Container image description
 LABEL description='Application for updating MaxMind GeoIP and GeoLite2 databases'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='8.0.0'
 # Application website
@@ -72,18 +74,18 @@ ENV CONFIG_FILE="$CONFIG_FILE"
 
 # Log file build-time variable
 ARG LOG_FILE="/var/log/$APP.log"
-# Log directory environment variable
+# Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
 ## Database Configuration
 
-# Edition identifiers built-time variable
+# Edition identifiers build-time variable
 # (default value is GeoLite2-Country GeoLite2-City)
 ARG EDITION_IDS='GeoLite2-Country GeoLite2-City GeoLite2-ASN'
 # Edition identifiers environment variable
 ENV EDITION_IDS="$EDITION_IDS"
 
-# Lowercase filenames option built-time variable
+# Lowercase filenames option build-time variable
 ARG LOWERCASE_FILENAMES='no'
 # Lowercase filenames option environment variable
 ENV LOWERCASE_FILENAMES="$LOWERCASE_FILENAMES"
@@ -106,6 +108,9 @@ COPY --from=build '/usr/local/bin/geoipupdate' '/usr/local/bin/'
 
 ### Configuration
 
+# Set container host name
+RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
+
 # Copy configuration template to the temporary directory
 COPY 'geoipupdate-config-template.conf' '/tmp/geoipupdate-config-template.conf'
 
@@ -114,8 +119,11 @@ COPY 'geoipupdate-config-template.conf' '/tmp/geoipupdate-config-template.conf'
 # Copy initialization script
 COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
 
-# Make the initialization script executable and schedule it to run weekly
-RUN chmod +x "/usr/local/bin/$APP-init" && cp "/usr/local/bin/$APP-init" '/etc/periodic/weekly/'
+# Copy execution script
+COPY "$APP-exec.sh" "/usr/local/bin/$APP-exec"
+
+# Make the initialization and execution scripts executable and schedule the execution script to run weekly
+RUN chmod +x "/usr/local/bin/$APP-init" && chmod +x "/usr/local/bin/$APP-exec" && cp "/usr/local/bin/$APP-exec" '/etc/periodic/weekly/'
 
 ### Ports
 
