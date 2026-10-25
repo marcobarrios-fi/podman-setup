@@ -84,11 +84,6 @@ ENV LOG_DIR="$LOG_DIR"
 
 ## Database Configuration
 
-# Database directory build-time variable
-ARG DB_DIR="$DATA_DIR"
-# Database directory environment variable
-ENV DB_DIR="$DB_DIR"
-
 # Database file build-time variable
 ARG DB_FILE='wordpress.sqlite.db'
 # Database file environment variable
@@ -156,8 +151,8 @@ COPY 'wordpress-php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf
 # Delete the default PHP-FPM configuration file
 RUN rm '/etc/php/php-fpm.d/www.conf'
 
-# Create configuration file from the configuration template and delete the template
-# RUN envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/php/php-fpm.d/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
+# The configuration file is created from the configuration template by the initialization script
+# (environment variables are not available at the build time)
 
 ## WordPress (WP)
 
