@@ -4,6 +4,8 @@
 # Latest Alpine release
 FROM alpine:latest
 
+### Metadata
+
 # Container image version
 LABEL version='1.0.0'
 # Application name
@@ -11,7 +13,7 @@ LABEL image.app-name='Certbot'
 # Container image description
 LABEL description='Application for generating free Lets Encrypt SSL certificates'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='3.0.1'
 # Application website
@@ -74,12 +76,12 @@ ARG DIGITALOCEAN_DOMAINS=
 # DigitalOcean domains environment variable
 ENV DIGITALOCEAN_DOMAINS="$DIGITALOCEAN_DOMAINS"
 
-# Cloudflare configuration file build-time variable
+# Cloudflare configuration build-time variable
 ARG CLOUDFLARE_CONFIG='/etc/letsencrypt/credentials/cloudflare-dns.ini'
-# Cloudflare configuration file environment variable
+# Cloudflare configuration environment variable
 ENV CLOUDFLARE_CONFIG="$CLOUDFLARE_CONFIG"
 
-# DigitalOcean configuration file build-time variable
+# DigitalOcean configuration build-time variable
 ARG DIGITALOCEAN_CONFIG='/etc/letsencrypt/credentials/digitalocean-dns.ini'
 # DigitalOcean configuration environment variable
 ENV DIGITALOCEAN_CONFIG="$DIGITALOCEAN_CONFIG"
@@ -117,7 +119,7 @@ RUN mkdir -p '/etc/letsencrypt/credentials'
 # Set container host name
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
 
-# Configure certbot append log information to a single log file
+# Configure Certbot to append log information to a single log file
 RUN echo '--max-log-backups = 0' > '/etc/letsencrypt/cli.ini'
 
 # Copy Cloudflare DNS configuration template to the temporary directory
@@ -135,13 +137,13 @@ COPY 'certbot-digitalocean-dns-template.ini' '/tmp/digitalocean-dns-template.ini
 COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
 
 # Copy execution script
-COPY 'certbot-exec.sh' '/usr/local/bin/certbot-exec'
+COPY "$APP-exec.sh" "/usr/local/bin/$APP-exec"
 
 # Copy deployment script
-COPY 'certbot-deploy.sh' '/usr/local/bin/certbot-deploy'
+COPY "$APP-deploy.sh" "/usr/local/bin/$APP-deploy"
 
 # Make the initialization, execution, and deployment scripts executable, and schedule the execution script to run weekly
-RUN chmod +x "/usr/local/bin/$APP-init" && chmod +x '/usr/local/bin/certbot-exec' && chmod +x '/usr/local/bin/certbot-deploy' && cp '/usr/local/bin/certbot-exec' '/etc/periodic/weekly/'
+RUN chmod +x "/usr/local/bin/$APP-init" && chmod +x "/usr/local/bin/$APP-exec" && chmod +x "/usr/local/bin/$APP-deploy" && cp "/usr/local/bin/$APP-exec" '/etc/periodic/weekly/'
 
 ### User
 
