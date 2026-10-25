@@ -12,6 +12,9 @@ mkdir -p "$DATA_DIR";
 # Create log directory
 mkdir -p "$LOG_DIR";
 
+# Create uploads directory
+mkdir -p "$DATA_DIR/uploads";
+
 ### Files
 
 # Create application database file
@@ -37,7 +40,7 @@ if test -f '/tmp/php-fpm-config-template.conf'; then
   # Create PHP-FPM configuration file from the configuration template
   envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/php/php-fpm.d/php-fpm.conf';
   # Remove the configuration template
-  rm '/tmp/php-fpm-config-template.conf'
+  rm '/tmp/php-fpm-config-template.conf';
 fi
 
 if test -d '/tmp/wordpress'; then
