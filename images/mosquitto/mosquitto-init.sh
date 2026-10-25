@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# home.marcobarrios.no Mosquitto Initialization Shell Script
+# marcobarrios.fi Mosquitto Initialization Shell Script
 # /usr/local/bin/mosquitto-init
 
 ### Directories
@@ -37,11 +37,11 @@ chown "$USER:$GROUP" "$PASSWORD_FILE";
 
 ### Configuration
 
-if test -f '/tmp/mosquitto-config.conf'; then
+if test -f '/tmp/mosquitto-config-template.conf'; then
   # Create configuration file from the configuration template
-  envsubst < '/tmp/mosquitto-config.conf' > "$CONFIG_FILE";
+  envsubst < '/tmp/mosquitto-config-template.conf' > "$CONFIG_FILE";
   # Delete configuration template
-  rm '/tmp/mosquitto-config.conf';
+  rm '/tmp/mosquitto-config-template.conf';
 fi
 
 # Start Mosquitto with the specified configuration file
