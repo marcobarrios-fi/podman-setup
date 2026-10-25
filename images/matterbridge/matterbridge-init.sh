@@ -6,11 +6,13 @@
 ### Directories
 # Mounted volumes are not available at the build time
 
-# Create application directory
+# Create data directory
 mkdir -p "$DATA_DIR";
 
-# Create log directory
-mkdir -p "$(dirname "$LOG_FILE")";
+if test -n "$LOG_FILE"; then
+  # Create log directory
+  mkdir -p "$(dirname "$LOG_FILE")";
+fi
 
 ### Secrets
 # Secrets are not available at the build time
