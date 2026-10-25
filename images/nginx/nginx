@@ -94,8 +94,8 @@ RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --ui
 
 ### Packages
 
-# Install GNU Gettext environment substitution, NGINX web server and reverse proxy, and NGINX HTTP JavaScript module
-RUN apk update && apk add --no-cache gettext-envsubst nginx nginx-mod-http-js
+# Install GNU Gettext environment substitution, NGINX web server and reverse proxy, and NGINX HTTP GeoIP2 and JavaScript modules
+RUN apk update && apk add --no-cache gettext-envsubst nginx nginx-mod-http-geoip2 nginx-mod-http-js
 
 ### Directories
 # Mounted volumes are not available at the build time
