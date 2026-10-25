@@ -15,7 +15,7 @@ mkdir -p "$LOG_DIR";
 ### Files
 
 # Create application database file
-touch "$DATA_DIR/wordpress.sqlite.db";
+touch "$DATA_DIR/$DB_FILE";
 
 # Create access log file
 touch "$LOG_DIR/access.log";
