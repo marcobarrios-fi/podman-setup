@@ -36,7 +36,7 @@ ENV DOMAIN="$DOMAIN"
 # Group identification build-time variable
 ARG GROUP_ID='101'
 # Group name build-time variable
-ARG GROUP="$APP"
+ARG GROUP='web-server'
 # Group name environment variable
 ENV GROUP="$GROUP"
 
@@ -64,16 +64,20 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
-# PHP version build-time variable
-ARG PHP_VERSION='php84'
-# PHP-FPM version build-time variable
-ARG PHP_FPM_VERSION='php-fpm84'
+## Socket Configuration
 
-# PHP-FPM socket build-time variable 
+# Socket build-time variable 
 # (default value is /run/php/php8.4-fpm.sock)
 ARG SOCKET='/run/php/php-fpm.sock'
 # PHP-FPM socket environment variable
 ENV SOCKET="$SOCKET"
+
+## PHP Configuration
+
+# PHP version build-time variable
+ARG PHP_VERSION='php84'
+# PHP-FPM version build-time variable
+ARG PHP_FPM_VERSION='php-fpm84'
 
 ### Users
 
@@ -105,7 +109,7 @@ RUN rm '/etc/php/php-fpm.d/www.conf'
 COPY 'php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
 
 # Create configuration file from the configuration template and delete the template
-RUN envsubst < '/tmp/php-fpm-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/php-fpm-config-template.conf'
+# RUN envsubst < '/tmp/php-fpm-config-template.conf' > "$CONFIG_FILE" && rm '/tmp/php-fpm-config-template.conf'
 
 # Rename Client URL extension configuration file (does not impact functionality)
 RUN mv '/etc/php/conf.d/00_curl.ini' '/etc/php/conf.d/curl.ini'
