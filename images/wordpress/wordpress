@@ -39,7 +39,7 @@ ARG DOMAIN='localhost'
 # Domain environment variable
 ENV DOMAIN="$DOMAIN"
 
-## Group ID and group name
+## Group Configuration
 
 # Group identification build-time variable
 ARG GROUP_ID='101'
@@ -50,7 +50,7 @@ ARG GROUP="$APP"
 # Group name environment variable
 ENV GROUP="$GROUP"
 
-## User ID and user name
+## User Configuration
 
 # User identification build-time variable
 ARG USER_ID='101'
@@ -76,6 +76,14 @@ ARG CONFIG_FILE="$APP_DIR/wp-config.php"
 # Configuration file environment variable
 ENV CONFIG_FILE="$CONFIG_FILE"
 
+# Log directory build-time variable
+# (directory for access and error log)
+ARG LOG_DIR="/var/log/$APP"
+# Log directory environment variable
+ENV LOG_DIR="$LOG_DIR"
+
+## Database Configuration
+
 # Database directory build-time variable
 ARG DB_DIR="$DATA_DIR"
 # Database directory environment variable
@@ -86,11 +94,7 @@ ARG DB_FILE='wordpress.sqlite.db'
 # Database file environment variable
 ENV DB_FILE="$DB_FILE"
 
-# Log directory build-time variable
-# (directory for access and error log)
-ARG LOG_DIR="/var/log/$APP"
-# Log directory environment variable
-ENV LOG_DIR="$LOG_DIR"
+## PHP Configuration
 
 # PHP version build-time variable
 ARG PHP_VERSION='php84'
@@ -102,6 +106,8 @@ ARG PHP_FPM_VERSION='php-fpm84'
 ARG PHP_FPM_SOCKET='/run/php/php-fpm.sock'
 # PHP-FPM socket environment variable
 ENV PHP_FPM_SOCKET="$PHP_FPM_SOCKET"
+
+## Source Configuration
 
 # Source URL build-time variable
 ARG SOURCE_URL='https://wordpress.org/latest.tar.gz'
@@ -181,8 +187,8 @@ RUN chmod +x "/usr/local/bin/$APP-init"
 
 ### Ports
 
-# Expose port 9000 (not applicable when using sockets)
-EXPOSE 9000
+# Expose port 9001 (not applicable when using sockets)
+EXPOSE 9001
 
 ### User
 
