@@ -13,7 +13,7 @@ LABEL image.app-name='Matterbridge'
 # Container image description
 LABEL description='Matter plugin manager and bridge'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='3.9.0'
 # Application website
@@ -43,7 +43,7 @@ ARG USER="$APP"
 
 # Data directory build-time variable
 ARG DATA_DIR="/var/lib/$APP"
-# Matterbridge directory environment variable
+# Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
 # Log file build-time variable
@@ -121,8 +121,6 @@ COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
 
 # Make the initialization script executable
 RUN chmod +x "/usr/local/bin/$APP-init"
-
-### Logging
 
 ### Ports
 
