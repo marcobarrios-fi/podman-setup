@@ -13,7 +13,7 @@ LABEL image.app-name='NGINX'
 # Container image description
 LABEL description='Web server and reverse proxy'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='1.26.1'
 # Application website
@@ -51,6 +51,14 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
+## PHP-FPM Configuration
+
+# PHP-FPM socket build-time variable
+# (default value is /run/php/php8.4-fpm.sock)
+ARG PHP_FPM_SOCKET='/run/php-fpm.sock'
+# PHP-FPM socket environment variable
+ENV PHP_FPM_SOCKET="$PHP_FPM_SOCKET"
+
 ## Sites Configuration
 
 # Sites directory build-time variable
@@ -73,17 +81,17 @@ ENV HTTPS_PORT="$HTTPS_PORT"
 ## GeoIP Configuration
 
 # GeoIP country database build-time variable
-ARG GEOIP_COUNTRY_DB='/usr/share/GeoIP/GeoIP2-Country.mmdb'
+ARG GEOIP_COUNTRY_DB='/usr/local/share/GeoIP/GeoIP2-Country.mmdb'
 # GeoIP country database environment variable
 ENV GEOIP_COUNTRY_DB="$GEOIP_COUNTRY_DB"
 
 # GeoIP city database build-time variable
-ARG GEOIP_CITY_DB='/usr/share/GeoIP/GeoIP2-City.mmdb'
+ARG GEOIP_CITY_DB='/usr/local/share/GeoIP/GeoIP2-City.mmdb'
 # GeoIP city database environment variable
 ENV GEOIP_CITY_DB="$GEOIP_CITY_DB"
 
 # GeoIP ASN database build-time variable
-ARG GEOIP_ASN_DB='/usr/share/GeoIP/GeoIP2-ASN.mmdb'
+ARG GEOIP_ASN_DB='/usr/local/share/GeoIP/GeoIP2-ASN.mmdb'
 # GeoIP ASN database environment variable
 ENV GEOIP_ASN_DB="$GEOIP_ASN_DB"
 
@@ -120,13 +128,13 @@ RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config-template.conf' >
 COPY 'nginx-php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
 
 # Create PHP-FPM configuration file from the configuration template and delete the configuration template
-RUN envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
+RUN envsubst '${PHP_FPM_SOCKET}' < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
 
 # Copy FastCGI parameters configuration file to the temporary directory
 COPY 'nginx-fastcgi-params.conf' '/tmp/fastcgi-params.conf'
 
 # Append FastCGI parameters to the FastCGI configuration file and delete the configuration template
-RUN envsubst < '/tmp/fastcgi-params.conf' >> '/etc/nginx/fastcgi.conf' && rm '/tmp/fastcgi-params.conf'
+RUN cat '/tmp/fastcgi-params.conf' >> '/etc/nginx/fastcgi.conf' && rm '/tmp/fastcgi-params.conf'
 
 ## GeoIP Configuration
 
@@ -134,7 +142,7 @@ RUN envsubst < '/tmp/fastcgi-params.conf' >> '/etc/nginx/fastcgi.conf' && rm '/t
 COPY 'nginx-geoip-config-template.conf' '/tmp/geoip-config-template.conf'
 
 # Create GeoIP configuration file from the configuration template and delete the configuration template
-RUN envsubst < '/tmp/geoip-config-template.conf' > '/etc/nginx/geoip.conf' && rm '/tmp/geoip-config-template.conf'
+RUN envsubst '${GEOIP_COUNTRY_DB} ${GEOIP_CITY_DB}' < '/tmp/geoip-config-template.conf' > '/etc/nginx/geoip.conf' && rm '/tmp/geoip-config-template.conf'
 
 ### Hosts Configuration
 
