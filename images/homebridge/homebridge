@@ -141,7 +141,7 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 ENV UI_BIN='/usr/local/lib/node_modules/homebridge-config-ui-x/dist/bin/standalone.js'
 
 # Copy configuration template to the temporary directory
-COPY 'homebridge-config-template.json' '/tmp/config-template.json'
+COPY 'homebridge-config-template.json' '/tmp/homebridge-config-template.json'
 
 ### Secrets
 # Secrets are not available at the build time
