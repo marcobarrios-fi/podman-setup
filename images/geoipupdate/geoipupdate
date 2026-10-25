@@ -66,9 +66,9 @@ ARG DATA_DIR='/usr/local/share/GeoIP'
 ENV DATA_DIR="$DATA_DIR"
 
 # Configuration file build-time variable
-ARG CONFIG_FILE='/usr/local/etc/GeoIP.conf'
+ARG CONFIG_FILE='/etc/GeoIP.conf'
 # Configuration file environment variable
-ENV GEOIP_CONF="$CONFIG_FILE"
+ENV CONFIG_FILE="$CONFIG_FILE"
 
 # Log file build-time variable
 ARG LOG_FILE="/var/log/$APP.log"
