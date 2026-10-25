@@ -20,8 +20,8 @@ if test -f '/tmp/php-fpm-config-template.conf'; then
   # Create configuration file from the configuration template
   envsubst < '/tmp/php-fpm-config-template.conf' > "$CONFIG_FILE";
   # Remove the configuration template
-  rm '/tmp/php-fpm-config-template.conf'
+  rm '/tmp/php-fpm-config-template.conf';
 fi
 
 # Start PHP-FPM
-exec php-fpm --nodaemonize
+exec php-fpm --nodaemonize;
