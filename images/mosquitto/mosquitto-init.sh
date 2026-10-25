@@ -16,12 +16,14 @@ if test -n "$LOG_FILE"; then
   touch "$LOG_FILE";
 fi
 
-### Authentication
-# Secrets are not available at the build time
+### Secrets
+# Secrets are not available at the build time.
 
-# Export MQTT password as an environment variable
-if test -f '/run/secrets/mqtt-password'; then
+if test -s '/run/secrets/mqtt-password'; then
+  # Set MQTT password environment variable
   export MQTT_PASSWORD=$(cat '/run/secrets/mqtt-password');
+else
+  echo 'Error: MQTT password secret is not specified' > '/dev/stderr';
 fi
 
 # Create password file
