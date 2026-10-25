@@ -116,13 +116,25 @@ RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config-template.conf' >
 
 ## PHP-FPM (PHP FastCGI Process Manager) Configuration
 
-# Copy PHP-FPM configuration file
+# Copy PHP-FPM configuration template to the temporary directory
 COPY 'nginx-php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
 
+# Create PHP-FPM configuration file from the configuration template and delete the configuration template
 RUN envsubst < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
 
-# Add script filename FastCGI parameter to the FastCGI configuration file
-RUN echo 'fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;' >> '/etc/nginx/fastcgi.conf'
+# Copy FastCGI parameters configuration file to the temporary directory
+COPY 'nginx-fastcgi-params.conf' '/tmp/fastcgi-params.conf'
+
+# Append FastCGI parameters to the FastCGI configuration file and delete the configuration template
+RUN envsubst < '/tmp/fastcgi-params.conf' >> '/etc/nginx/fastcgi.conf' && rm '/tmp/fastcgi-params.conf'
+
+## GeoIP Configuration
+
+# Copy GeoIP configuration template to the temporary directory
+COPY 'nginx-geoip-config-template.conf' '/tmp/geoip-config-template.conf'
+
+# Create GeoIP configuration file from the configuration template and delete the configuration template
+RUN envsubst < '/tmp/geoip-config-template.conf' > '/etc/nginx/geoip.conf' && rm '/tmp/geoip-config-template.conf'
 
 ### Hosts Configuration
 
