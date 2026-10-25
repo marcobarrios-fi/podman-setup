@@ -54,11 +54,15 @@ ARG LOG_DIR="/var/log/$APP"
 # Log directory environment variable
 ENV LOG_DIR="$LOG_DIR"
 
+## Account Configuration
+
 # Account email address build-time variable
 # (account email address must be provided in the configuration file)
 ARG ACCOUNT_EMAIL_ADDRESS=
 # Account email address environment variable
 ENV ACCOUNT_EMAIL_ADDRESS="$ACCOUNT_EMAIL_ADDRESS"
+
+## Service Configuration
 
 # Cloudflare domains build-time variable
 ARG CLOUDFLARE_DOMAINS=
