@@ -72,20 +72,20 @@ ENV HTTPS_PORT="$HTTPS_PORT"
 
 ## GeoIP Configuration
 
-# GeoIP country database file build-time variable
-ARG GEOIP_COUNTRY_DB_FILE='/usr/share/GeoIP/GeoIP2-Country.mmdb'
-# GeoIP country database file environment variable
-ENV GEOIP_COUNTRY_DB_FILE="$GEOIP_COUNTRY_DB_FILE"
+# GeoIP country database build-time variable
+ARG GEOIP_COUNTRY_DB='/usr/share/GeoIP/GeoIP2-Country.mmdb'
+# GeoIP country database environment variable
+ENV GEOIP_COUNTRY_DB="$GEOIP_COUNTRY_DB"
 
-# GeoIP city database file build-time variable
-ARG GEOIP_CITY_DB_FILE='/usr/share/GeoIP/GeoIP2-City.mmdb'
-# GeoIP city database file environment variable
-ENV GEOIP_CITY_DB_FILE="$GEOIP_CITY_DB_FILE"
+# GeoIP city database build-time variable
+ARG GEOIP_CITY_DB='/usr/share/GeoIP/GeoIP2-City.mmdb'
+# GeoIP city database environment variable
+ENV GEOIP_CITY_DB="$GEOIP_CITY_DB"
 
-# GeoIP ASN database file build-time variable
-ARG GEOIP_ASN_DB_FILE='/usr/share/GeoIP/GeoIP2-ASN.mmdb'
-# GeoIP ASN database file environment variable
-ENV GEOIP_ASN_DB_FILE="$GEOIP_ASN_DB_FILE"
+# GeoIP ASN database build-time variable
+ARG GEOIP_ASN_DB='/usr/share/GeoIP/GeoIP2-ASN.mmdb'
+# GeoIP ASN database environment variable
+ENV GEOIP_ASN_DB="$GEOIP_ASN_DB"
 
 ### Users
 
@@ -157,7 +157,6 @@ RUN chmod +x "/usr/local/bin/$APP-init"
 COPY "$APP-reload.sh" "/usr/local/bin/$APP-reload"
 
 # Make the reload script executable and schedule the script to run weekly
-# Todo: Verify that scheduling works
 RUN chmod +x "/usr/local/bin/$APP-reload" && cp "/usr/local/bin/$APP-reload" '/etc/periodic/weekly/'
 
 ### Ports
