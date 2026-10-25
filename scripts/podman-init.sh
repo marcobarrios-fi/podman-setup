@@ -8,11 +8,11 @@
 set -eu;
 
 # Usage instructions for the script
-USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository> <GitHub repository access token>$(tput sgr0)";
+USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository name> <GitHub repository access token>$(tput sgr0)";
 
 echo "Initializing Podman...";
 
-# The script expects two arguments; the repository URL and the repository access token
+# The script expects two arguments; the repository name and the repository access token
 
 # Verify that the GitHub repository name argument was provided
 if test "$#" -lt 1; then
@@ -60,6 +60,7 @@ cleanup() {
 
 }
 
+# Execute cleanup on script exit, hangup, interrupt, or termination signals
 trap cleanup EXIT HUP INT TERM;
 
 # Verify that the temporary directory was successfully created
