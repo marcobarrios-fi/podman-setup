@@ -69,7 +69,7 @@ if test ! -d "$TEMP_DIR"; then
 fi
 
 # Display temporary directory
-echo "Temporary directory:"
+echo "Temporary directory:";
 echo "$(tput bold)$(tput setaf 4)$TEMP_DIR$(tput sgr0)";
 
 # Create source directory
@@ -144,6 +144,8 @@ fi
 # Execute pods initialization script 
 # (passes the configuration directory as an environment variable to the script)
 env CONFIG_DIR="$CONFIG_DIR" sh "$PODS_INIT_SCRIPT";
+
+trap - EXIT HUP INT TERM;
 
 cleanup;
 
