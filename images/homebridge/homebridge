@@ -1,5 +1,5 @@
 # marcobarrios.fi Homebridge container image
-# homebridge
+# marcobarrios.fi-homebridge
 
 # Latest Alpine release
 FROM alpine:latest
@@ -13,11 +13,11 @@ LABEL image.app-name='Homebridge'
 # Container image description
 LABEL description='Apple Home translation layer for unsupported devices'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='1.11.0'
 # Application website
-LABEL image.app-url='http://homebridge.io/'
+LABEL image.app-url='https://homebridge.io/'
 
 ### Variables
 
