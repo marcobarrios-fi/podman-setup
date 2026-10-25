@@ -12,10 +12,10 @@
 for domain in $RENEWED_DOMAINS; do
   # Copy private key to the SSL directory
   echo "Copying $domain private key to SSL keys directory";
-  cp --update "$RENEWED_LINEAGE/privkey.pem" "$SSL_KEYS_DIR/$domain.key"
+  cp --update "$RENEWED_LINEAGE/privkey.pem" "$SSL_KEYS_DIR/$domain.key";
   # Copy certificate to the SSL directory
   echo "Copying $domain certificate to SSL certificates directory";
-  cp --update "$RENEWED_LINEAGE/fullchain.pem" "$SSL_CERTS_DIR/$domain.crt"
+  cp --update "$RENEWED_LINEAGE/fullchain.pem" "$SSL_CERTS_DIR/$domain.crt";
   # Stop processing after the first domain
-  break
+  break;
 done
