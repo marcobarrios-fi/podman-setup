@@ -116,6 +116,7 @@ for IMAGE_DIR in "$SOURCE_DIR/images/"*/; do
 done
 
 ### Secrets
+# Secrets are not available at the build time
 
 # Secrets initialization script
 SECRETS_INIT_SCRIPT="$SOURCE_DIR/scripts/podman-secrets-init.sh";
