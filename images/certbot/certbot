@@ -1,0 +1,144 @@
+# marcobarrios.fi Certbot container image
+# marcobarrios.fi-certbot
+
+# Latest Alpine release
+FROM alpine:latest
+
+# Container image version
+LABEL version='1.0.0'
+# Application name
+LABEL image.app-name='Certbot'
+# Container image description
+LABEL description='Application for generating free Lets Encrypt SSL certificates'
+# Operating system version
+LABEL image.os-version='3.21.3'
+# Application version
+LABEL image.app-version='3.0.1'
+# Application website
+LABEL image.app-url='https://certbot.eff.org/'
+# Application documentation
+LABEL image.app-docs='https://eff-certbot.readthedocs.io/en/stable/using.html'
+
+### Variables
+
+# App build-time variable
+ARG APP='certbot'
+# App environment variable
+ENV APP="$APP"
+
+# Domain build-time variable
+ARG DOMAIN='localhost'
+# Domain environment variable
+ENV DOMAIN="$DOMAIN"
+
+# Group identification build-time variable
+ARG GROUP_ID='101'
+# Group name build-time variable
+ARG GROUP="$APP"
+
+# User identification build-time variable
+ARG USER_ID='101'
+# User name build-time variable
+ARG USER="$APP"
+
+# Data directory build-time variable
+ARG DATA_DIR="/var/lib/$APP"
+# Data directory environment variable
+ENV DATA_DIR="$DATA_DIR"
+
+# Log directory build-time variable
+# (it is not possible to configure the log file name)
+ARG LOG_DIR="/var/log/$APP"
+# Log directory environment variable
+ENV LOG_DIR="$LOG_DIR"
+
+# Account email address build-time variable
+# (account email address must be provided in the configuration file)
+ARG ACCOUNT_EMAIL_ADDRESS=
+# Account email address environment variable
+ENV ACCOUNT_EMAIL_ADDRESS="$ACCOUNT_EMAIL_ADDRESS"
+
+# Cloudflare domains build-time variable
+ARG CLOUDFLARE_DOMAINS=
+# Cloudflare domains environment variable
+ENV CLOUDFLARE_DOMAINS="$CLOUDFLARE_DOMAINS"
+
+# DigitalOcean domains build-time variable
+ARG DIGITALOCEAN_DOMAINS=
+# DigitalOcean domains environment variable
+ENV DIGITALOCEAN_DOMAINS="$DIGITALOCEAN_DOMAINS"
+
+# Cloudflare configuration file build-time variable
+ARG CLOUDFLARE_CONFIG='/etc/letsencrypt/credentials/cloudflare-dns.ini'
+# Cloudflare configuration file environment variable
+ENV CLOUDFLARE_CONFIG="$CLOUDFLARE_CONFIG"
+
+# DigitalOcean configuration file build-time variable
+ARG DIGITALOCEAN_CONFIG='/etc/letsencrypt/credentials/digitalocean-dns.ini'
+# DigitalOcean configuration environment variable
+ENV DIGITALOCEAN_CONFIG="$DIGITALOCEAN_CONFIG"
+
+## SSL Configuration
+
+# SSL private keys directory build-time variable
+ARG SSL_KEYS_DIR='/etc/ssl/private'
+# SSL private keys directory environment variable
+ENV SSL_KEYS_DIR="$SSL_KEYS_DIR"
+
+# SSL certificates directory build-time variable
+ARG SSL_CERTS_DIR='/etc/ssl/certs'
+# SSL certificates directory environment variable
+ENV SSL_CERTS_DIR="$SSL_CERTS_DIR"
+
+### Users
+
+# Create user group and add user to the group
+RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --uid "$USER_ID" --system --ingroup "$GROUP" "$USER"
+
+### Packages
+
+# Install GNU Gettext environment substitution, Certbot, Certbot Cloudflare DNS plugin, and Certbot DigitalOcean DNS plugin
+RUN apk update && apk add --no-cache gettext-envsubst certbot certbot-dns-cloudflare certbot-dns-digitalocean
+
+### Directories
+# Mounted volumes are not available at the build time
+
+# Create /etc/letsencrypt/credentials directory
+RUN mkdir -p '/etc/letsencrypt/credentials'
+
+### Configuration
+
+# Set container host name
+RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
+
+# Configure certbot append log information to a single log file
+RUN echo '--max-log-backups = 0' > '/etc/letsencrypt/cli.ini'
+
+# Copy Cloudflare DNS configuration template to the temporary directory
+COPY 'certbot-cloudflare-dns-template.ini' '/tmp/cloudflare-dns-template.ini'
+
+# Copy DigitalOcean DNS configuration template to the temporary directory
+COPY 'certbot-digitalocean-dns-template.ini' '/tmp/digitalocean-dns-template.ini'
+
+### Secrets
+
+### Scripts
+
+# Copy initialization script
+COPY "$APP-init.sh" "/usr/local/bin/$APP-init"
+
+# Copy execution script
+COPY 'certbot-exec.sh' '/usr/local/bin/certbot-exec'
+
+# Copy deployment script
+COPY 'certbot-deploy.sh' '/usr/local/bin/certbot-deploy'
+
+# Make the initialization, execution, and deployment scripts executable, and schedule the execution script to run weekly
+RUN chmod +x "/usr/local/bin/$APP-init" && chmod +x '/usr/local/bin/certbot-exec' && chmod +x '/usr/local/bin/certbot-deploy' && cp '/usr/local/bin/certbot-exec' '/etc/periodic/weekly/'
+
+### User
+
+# Switch to container user
+# USER "$USER"
+
+ENTRYPOINT ["certbot-init"]
