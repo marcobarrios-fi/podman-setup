@@ -32,14 +32,14 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
   fi
 
   # Assign secret configuration files as positional arguments
-  set -- "$SECRETS_DIR/"*.yaml;
+  set -- "$SECRETS_DIR/"*-template.json;
 
   # If secret configuration files exist
   if test -e "$1"; then
 
     for SECRET_CONFIG_TEMPLATE in "$@"; do
 
-      SECRET_NAME=$(basename "$SECRET_CONFIG_TEMPLATE" '-template.yaml');
+      SECRET_NAME=$(basename "$SECRET_CONFIG_TEMPLATE" '-template.json');
 
       # If the secret does not exist
       if ! podman secret exists "$SECRET_NAME"; then
