@@ -3,7 +3,8 @@
 # marcobarrios.fi Certbot Exec Shell Script
 # /usr/local/bin/certbot-exec
 # Renews Let's Encrypt SSL certificates
-# https://eff-certbot.readthedocs.io/en/stable/using.html
+
+# Documentation: https://eff-certbot.readthedocs.io/en/stable/using.html
 
 # Notice that generating the certificate using DNS plugins failed with the default 10 second propagation time
 
