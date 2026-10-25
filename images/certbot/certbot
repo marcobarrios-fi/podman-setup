@@ -123,6 +123,7 @@ COPY 'certbot-cloudflare-dns-template.ini' '/tmp/cloudflare-dns-template.ini'
 COPY 'certbot-digitalocean-dns-template.ini' '/tmp/digitalocean-dns-template.ini'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ### Scripts
 
