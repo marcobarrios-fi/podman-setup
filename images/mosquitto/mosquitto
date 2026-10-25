@@ -59,17 +59,19 @@ ARG CONFIG_FILE='/etc/mosquitto/mosquitto.conf'
 # Configuration file environment variable
 ENV CONFIG_FILE="$CONFIG_FILE"
 
-# Password file build-time variable
-ARG PASSWORD_FILE='/etc/mosquitto/passwd'
-# Password file environment variable
-ENV PASSWORD_FILE="$PASSWORD_FILE"
-
 # Log file build-time variable
 ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
-## MQTT configuration
+## Password Configuration
+
+# Password file build-time variable
+ARG PASSWORD_FILE='/etc/mosquitto/passwd'
+# Password file environment variable
+ENV PASSWORD_FILE="$PASSWORD_FILE"
+
+## MQTT Configuration
 
 # MQTT port build-time variable
 ARG MQTT_PORT='1883'
