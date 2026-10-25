@@ -53,7 +53,7 @@ ENV DOMAIN="$DOMAIN"
 # Group identification build-time variable
 ARG GROUP_ID='101'
 # Group name build-time variable
-ARG GROUP="$APP"
+ARG GROUP='web-server'
 
 # User identification build-time variable
 ARG USER_ID='101'
