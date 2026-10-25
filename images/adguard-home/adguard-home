@@ -4,6 +4,8 @@
 # Latest Alpine release
 FROM alpine:latest
 
+### Metadata
+
 # Container image version
 LABEL version='1.0.0'
 # Application name
