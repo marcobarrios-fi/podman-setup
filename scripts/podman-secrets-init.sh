@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Podman Secrets Initialization Shell Script
-# Creates Podman secrets based on Kubernetes YAML files
+# Creates Podman secrets based on Kubernetes JSON configuration files
 # Usage: env CONFIG_DIR="<configuration_directory>" sh podman-secrets-init.sh
 
 # Enable strict error handling 
