@@ -44,9 +44,9 @@ fi
 
 # Run GeoIP Update
 if test -n "$LOG_FILE"; then
-  exec geoipupdate --config-file "$CONFIG_FILE" >> "$LOG_FILE" 2>&1;
+  geoipupdate --config-file "$CONFIG_FILE" >> "$LOG_FILE" 2>&1;
 else
-  exec geoipupdate --config-file "$CONFIG_FILE";
+  geoipupdate --config-file "$CONFIG_FILE";
 fi
 
 ## Convert geo-IP database filenames to lowercase
@@ -58,11 +58,13 @@ if test "$LOWERCASE_FILENAMES" = 'yes'; then
     if test -f "$database_file"; then
       # Convert filename to lowercase
       filename=$(basename "$database_file" | tr '[:upper:]' '[:lower:]');
-      # Rename the file
-      mv --force "$database_file" "$DATA_DIR/$filename";
+      if test "$database_file" != "$DATA_DIR/$filename"; then
+        # Rename the file
+        mv -f "$database_file" "$DATA_DIR/$filename";
+      fi
     fi
   done
 fi
 
-# Keep the container running indefinitely
-exec sleep infinity;
+# Start cron daemon
+exec crond -f;
