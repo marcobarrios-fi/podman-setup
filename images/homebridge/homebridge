@@ -51,6 +51,8 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
+## Application Configuration
+
 # Port build-time variable
 ARG PORT='51826'
 # Port environment variable
@@ -60,6 +62,8 @@ ENV PORT="$PORT"
 ARG USERNAME='CC:22:3D:E3:CE:30'
 # Username environment variable
 ENV USERNAME="$USERNAME"
+
+## Frontend Configuration
 
 # Frontend port build-time variable
 ARG FRONTEND_PORT='8581'
