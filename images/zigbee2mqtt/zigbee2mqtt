@@ -124,6 +124,7 @@ ENV DATA="$DATA_DIR"
 COPY 'zigbee2mqtt-config-template.yaml' '/tmp/config-template.yaml'
 
 ### Secrets
+# Secrets are not available at the build time
 
 ### Scripts
 
