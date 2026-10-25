@@ -23,14 +23,14 @@ if test -s '/run/secrets/maxmind-account-id'; then
   # Set MaxMind account identifier environment variable
   export MAXMIND_ACCOUNT_ID="$(cat '/run/secrets/maxmind-account-id')";
 else 
-  echo 'Error: MaxMind account identifier secret is not specified' > '/dev/stderr';
+  echo 'Warning: MaxMind account identifier secret is not specified' > '/dev/stderr';
 fi
 
 if test -s '/run/secrets/maxmind-license-key'; then
   # Set MaxMind license key environment variable
   export MAXMIND_LICENSE_KEY="$(cat '/run/secrets/maxmind-license-key')";
 else
-  echo 'Error: MaxMind license key secret is not specified' > '/dev/stderr';
+  echo 'Warning: MaxMind license key secret is not specified' > '/dev/stderr';
 fi
 
 ### Configuration
