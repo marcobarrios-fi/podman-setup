@@ -9,6 +9,9 @@
 # Create data directory
 mkdir -p "$DATA_DIR";
 
+# Create configuration directory
+mkdir -p "$(dirname "$CONFIG_FILE")";
+
 if test -n "$LOG_FILE"; then
   # Create log directory
   mkdir -p "$(dirname "$LOG_FILE")";
@@ -41,9 +44,9 @@ fi
 
 # Run GeoIP Update
 if test -n "$LOG_FILE"; then
-  exec geoipupdate >> "$LOG_FILE" 2>&1;
+  exec geoipupdate --config-file "$CONFIG_FILE" >> "$LOG_FILE" 2>&1;
 else
-  exec geoipupdate;
+  exec geoipupdate --config-file "$CONFIG_FILE";
 fi
 
 ## Convert geo-IP database filenames to lowercase
