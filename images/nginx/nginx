@@ -31,15 +31,27 @@ ARG DOMAIN='localhost'
 # Domain environment variable
 ENV DOMAIN="$DOMAIN"
 
+## Group Configuration
+
 # Group identification build-time variable
 ARG GROUP_ID='101'
+# Group identification environment variable
+ENV GROUP_ID="$GROUP_ID"
 # Group name build-time variable
 ARG GROUP='web-server'
+# Group name environment variable
+ENV GROUP="$GROUP"
+
+## User Configuration
 
 # User identification build-time variable
 ARG USER_ID='101'
+# User identification environment variable
+ENV USER_ID="$USER_ID"
 # User name build-time variable
 ARG USER="$APP"
+# User name environment variable
+ENV USER="$USER"
 
 # Data directory build-time variable
 ARG DATA_DIR="/var/lib/$APP"
@@ -55,7 +67,7 @@ ENV LOG_FILE="$LOG_FILE"
 
 # PHP-FPM socket build-time variable
 # (default value is /run/php/php8.4-fpm.sock)
-ARG PHP_FPM_SOCKET='/run/php-fpm.sock'
+ARG PHP_FPM_SOCKET='unix:/run/php/php-fpm.sock'
 # PHP-FPM socket environment variable
 ENV PHP_FPM_SOCKET="$PHP_FPM_SOCKET"
 
@@ -81,17 +93,17 @@ ENV HTTPS_PORT="$HTTPS_PORT"
 ## GeoIP Configuration
 
 # GeoIP country database build-time variable
-ARG GEOIP_COUNTRY_DB='/usr/local/share/GeoIP/GeoIP2-Country.mmdb'
+ARG GEOIP_COUNTRY_DB='/usr/local/share/GeoIP/GeoLite2-Country.mmdb'
 # GeoIP country database environment variable
 ENV GEOIP_COUNTRY_DB="$GEOIP_COUNTRY_DB"
 
 # GeoIP city database build-time variable
-ARG GEOIP_CITY_DB='/usr/local/share/GeoIP/GeoIP2-City.mmdb'
+ARG GEOIP_CITY_DB='/usr/local/share/GeoIP/GeoLite2-City.mmdb'
 # GeoIP city database environment variable
 ENV GEOIP_CITY_DB="$GEOIP_CITY_DB"
 
 # GeoIP ASN database build-time variable
-ARG GEOIP_ASN_DB='/usr/local/share/GeoIP/GeoIP2-ASN.mmdb'
+ARG GEOIP_ASN_DB='/usr/local/share/GeoIP/GeoLite2-ASN.mmdb'
 # GeoIP ASN database environment variable
 ENV GEOIP_ASN_DB="$GEOIP_ASN_DB"
 
@@ -112,6 +124,7 @@ RUN apk update && apk add --no-cache gettext-envsubst nginx nginx-mod-http-geoip
 RUN mkdir -p '/etc/nginx/conf.d'
 
 ### Configuration
+# Podman kube play does not support build-time arguments
 
 # Set container host name
 RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/hosts'
@@ -119,8 +132,11 @@ RUN echo "$APP" > '/etc/hostname' && echo "127.0.1.1 $DOMAIN $APP" >> '/etc/host
 # Copy configuration template
 COPY 'nginx-config-template.conf' '/tmp/nginx-config-template.conf'
 
-# Delete default configuration file, create configuration file from the configuration template, and delete the configuration template
-RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config-template.conf' > '/etc/nginx/nginx.conf' && rm '/tmp/nginx-config-template.conf'
+# Delete default configuration file
+RUN rm '/etc/nginx/nginx.conf'
+
+# Create configuration file from the configuration template and delete the configuration template
+# RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config-template.conf' > '/etc/nginx/nginx.conf' && rm '/tmp/nginx-config-template.conf'
 
 ## PHP-FPM (PHP FastCGI Process Manager) Configuration
 
@@ -128,7 +144,7 @@ RUN rm '/etc/nginx/nginx.conf' && envsubst < '/tmp/nginx-config-template.conf' >
 COPY 'nginx-php-fpm-config-template.conf' '/tmp/php-fpm-config-template.conf'
 
 # Create PHP-FPM configuration file from the configuration template and delete the configuration template
-RUN envsubst '${PHP_FPM_SOCKET}' < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
+# RUN envsubst '${PHP_FPM_SOCKET}' < '/tmp/php-fpm-config-template.conf' > '/etc/nginx/php-fpm.conf' && rm '/tmp/php-fpm-config-template.conf'
 
 # Copy FastCGI parameters configuration file to the temporary directory
 COPY 'nginx-fastcgi-params.conf' '/tmp/fastcgi-params.conf'
@@ -142,7 +158,7 @@ RUN cat '/tmp/fastcgi-params.conf' >> '/etc/nginx/fastcgi.conf' && rm '/tmp/fast
 COPY 'nginx-geoip-config-template.conf' '/tmp/geoip-config-template.conf'
 
 # Create GeoIP configuration file from the configuration template and delete the configuration template
-RUN envsubst '${GEOIP_COUNTRY_DB} ${GEOIP_CITY_DB}' < '/tmp/geoip-config-template.conf' > '/etc/nginx/geoip.conf' && rm '/tmp/geoip-config-template.conf'
+# RUN envsubst '${GEOIP_COUNTRY_DB} ${GEOIP_CITY_DB}' < '/tmp/geoip-config-template.conf' > '/etc/nginx/geoip.conf' && rm '/tmp/geoip-config-template.conf'
 
 ### Hosts Configuration
 
