@@ -51,6 +51,8 @@ ARG LOG_FILE="/var/log/$APP.log"
 # Log file environment variable
 ENV LOG_FILE="$LOG_FILE"
 
+## Frontend Configuration
+
 # Frontend port build-time variable
 ARG FRONTEND_PORT='8283'
 # Frontend port environment variable
