@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Podman Pods Initialization Shell Script
-# Creates Podman containers, pods, and volumes based on Kubernetes YAML files
+# Creates Podman containers, pods, and volumes based on Kubernetes JSON configuration files
 # Usage: env CONFIG_DIR="<configuration_directory>" sh podman-pods-init.sh
 
 # Enable strict error handling 
