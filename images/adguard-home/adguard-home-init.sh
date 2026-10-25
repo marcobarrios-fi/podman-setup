@@ -3,7 +3,7 @@
 # marcobarrios.fi AdGuard Home Initialization Shell Script
 # /usr/local/bin/adguard-home-init
 
-# Data in the application directory will be deleted every time the container is started
+# Data in the application directory will be deleted every time the container is built
 
 ### Directories
 # Mounted volumes are not available at the build time
