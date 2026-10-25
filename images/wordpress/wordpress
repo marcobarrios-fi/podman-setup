@@ -1,8 +1,10 @@
-# marcobarrios.fi WordPress image
+# marcobarrios.fi WordPress container image
 # marcobarrios.fi-wordpress
 
 # Latest Alpine release
 FROM alpine:latest
+
+### Metadata
 
 # Container image version
 LABEL version='1.0.0'
@@ -11,7 +13,7 @@ LABEL image.app-name='WordPress'
 # Container image description
 LABEL description='Open source publishing platform'
 # Operating system version
-LABEL image.os-version='3.21.3'
+LABEL image.os-version='3.24.2'
 # Application version
 LABEL image.app-version='7.1.3'
 # Application website
@@ -67,7 +69,7 @@ ARG APP_DIR='/var/www/html/wordpress'
 ENV APP_DIR="$APP_DIR"
 
 # Data directory build-time variable
-ARG DATA_DIR='/var/www/html/wordpress'
+ARG DATA_DIR="/var/lib/$APP"
 # Data directory environment variable
 ENV DATA_DIR="$DATA_DIR"
 
@@ -123,12 +125,12 @@ RUN getent group "$GROUP" || addgroup --gid "$GROUP_ID" "$GROUP" && adduser --ui
 
 ### Packages
 
-# Install GNU Gettext environment substitution, JSON command-line processor, PHP hypertext preprocessor, and PHP command-line interface (CLI), PHP FastCGI process manager (FPM), and PHP client URL extensions
+# Install GNU Gettext environment substitution, JSON command-line processor, PHP hypertext preprocessor, PHP command-line interface (CLI), PHP FastCGI process manager (FPM), and PHP client URL extensions
 # Install PHP SQLite 3, PHP data objects (PDO), and PHP data objects SQLite extensions required by the WordPress SQLite database integration plugin
 # Install PHP archive (PHAR), PHP internationalization conversion, and PHP multi-byte extensions required by the WordPress command-line utility
 # Install PHP document object model (DOM), PHP exchangeable image file format (EXIF), PHP file information, PHP graphics draw, PHP internationalization, PHP extensible markup language (XML), and PHP ZIP file format extensions used by WordPress
 
-RUN apk update && apk add --no-cache gettext-envsubst jq "$PHP_VERSION" "$PHP_VERSION-cli" "$PHP_VERSION-fpm" "$PHP_VERSION-curl" "$PHP_VERSION-sqlite3" "$PHP_VERSION-pdo" "$PHP_VERSION-pdo_sqlite" "$PHP_VERSION-phar" "$PHP_VERSION-iconv" "$PHP_VERSION-mbstring" "$PHP_VERSION-dom" "$PHP_VERSION-exif" "$PHP_VERSION-fileinfo" "$PHP_VERSION-gd" "$PHP_VERSION-iconv" "$PHP_VERSION-intl" "$PHP_VERSION-xml" "$PHP_VERSION-zip"
+RUN apk update && apk add --no-cache gettext-envsubst jq "$PHP_VERSION" "$PHP_VERSION-cli" "$PHP_VERSION-fpm" "$PHP_VERSION-curl" "$PHP_VERSION-sqlite3" "$PHP_VERSION-pdo" "$PHP_VERSION-pdo_sqlite" "$PHP_VERSION-phar" "$PHP_VERSION-iconv" "$PHP_VERSION-mbstring" "$PHP_VERSION-dom" "$PHP_VERSION-exif" "$PHP_VERSION-fileinfo" "$PHP_VERSION-gd" "$PHP_VERSION-intl" "$PHP_VERSION-xml" "$PHP_VERSION-zip"
 
 ### Symbolic Links
 
@@ -156,7 +158,7 @@ RUN rm '/etc/php/php-fpm.d/www.conf'
 
 ## WordPress (WP)
 
-# Download the latest version of WordPress, extract the archive, move the files to the temporary directory, and the delete the downloaded archive
+# Download the latest version of WordPress, extract the archive, move the files to the temporary directory, and delete the downloaded archive
 RUN wget -O "$APP.tar.gz" "$SOURCE_URL" && tar -xzf "$APP.tar.gz" && mv "$APP" "/tmp/$APP" && rm "$APP.tar.gz"
   
 # Copy WordPress configuration file to the temporary directory
