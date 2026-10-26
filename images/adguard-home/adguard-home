@@ -33,15 +33,27 @@ ARG DOMAIN='localhost'
 # Domain environment variable
 ENV DOMAIN="$DOMAIN"
 
+## Group Configuration
+
 # Group identification build-time variable
 ARG GROUP_ID='101'
+# Group identification environment variable
+ENV GROUP_ID="$GROUP_ID"
 # Group name build-time variable
 ARG GROUP='adguard'
+# Group name environment variable
+ENV GROUP="$GROUP"
+
+## User Configuration
 
 # User identification build-time variable
 ARG USER_ID='101'
+# User identification environment variable
+ENV USER_ID="$USER_ID"
 # User name build-time variable
 ARG USER='adguard'
+# User name environment variable
+ENV USER="$USER"
 
 # Application directory build-time variable
 ARG APP_DIR="/var/lib/$APP"
