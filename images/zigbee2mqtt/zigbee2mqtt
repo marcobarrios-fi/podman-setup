@@ -31,15 +31,27 @@ ARG DOMAIN='localhost'
 # Domain environment variable
 ENV DOMAIN="$DOMAIN"
 
+## Group Configuration
+
 # Group identification build-time variable
 ARG GROUP_ID='101'
+# Group identification environment variable
+ENV GROUP_ID="$GROUP_ID"
 # Group name build-time variable
 ARG GROUP="$APP"
+# Group name environment variable
+ENV GROUP="$GROUP"
+
+## User Configuration
 
 # User identification build-time variable
 ARG USER_ID='101'
+# User identification environment variable
+ENV USER_ID="$USER_ID"
 # User name build-time variable
 ARG USER="$APP"
+# User name environment variable
+ENV USER="$USER"
 
 # Application directory build-time variable
 ARG APP_DIR='/usr/local/lib/node_modules/zigbee2mqtt'
@@ -97,6 +109,20 @@ ENV MQTT_BASE_TOPIC="$MQTT_BASE_TOPIC"
 ARG MQTT_USERNAME='mqtt'
 # MQTT username environment variable
 ENV MQTT_USERNAME="$MQTT_USERNAME"
+
+## SSL Configuration
+
+# SSL private key build-time variable
+# (SSL private key must be provided in the configuration file)
+ARG SSL_KEY=
+# SSL private key environment variable
+ENV SSL_KEY="$SSL_KEY"
+
+# SSL certificate build-time variable
+# (SSL certificate must be provided in the configuration file)
+ARG SSL_CERT=
+# SSL certificate environment variable
+ENV SSL_CERT="$SSL_CERT"
 
 ### Users
 
