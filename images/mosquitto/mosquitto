@@ -31,6 +31,8 @@ ARG DOMAIN='localhost'
 # Domain environment variable
 ENV DOMAIN="$DOMAIN"
 
+## Group Configuration
+
 # Group identification build-time variable
 ARG GROUP_ID='101'
 # Group identification environment variable
@@ -39,6 +41,8 @@ ENV GROUP_ID="$GROUP_ID"
 ARG GROUP="$APP"
 # Group name environment variable
 ENV GROUP="$GROUP"
+
+## User Configuration
 
 # User identification build-time variable
 ARG USER_ID='101'
