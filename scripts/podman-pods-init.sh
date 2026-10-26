@@ -55,7 +55,7 @@ if test "$input" = "YES" || test "$input" = "Yes" || test "$input" = "yes" || te
         cp "$POD" "$CONFIG_DIR/$POD_NAME.json";
 
         # Create pod
-        podman kube play --replace --no-pod-prefix --network 'podman' "$POD_NAME.json";
+        podman kube play --build --replace --no-pod-prefix --network 'podman' "$POD_NAME.json";
 
         # Display pod details
         echo "$POD_NAME pod:";
