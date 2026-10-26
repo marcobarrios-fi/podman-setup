@@ -103,13 +103,13 @@ ENV PHP_FPM_SOCKET="$PHP_FPM_SOCKET"
 # Source URL build-time variable
 ARG SOURCE_URL='https://wordpress.org/latest.tar.gz'
 
-# WordPress SQLite Database Integration Plugin release information build-time variable
-ARG SQLITE_DB_RELEASE_INFO='https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/releases/latest'
+# SQLite Database Integration Plugin release information URL build-time variable
+ARG SQLITE_DB_RELEASE_INFO_URL='https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/releases/latest'
 
-# WordPress SQLite Database Integration Plugin source URL build-time variable
+# SQLite Database Integration Plugin source URL build-time variable
 ARG SQLITE_DB_SOURCE_URL='https://raw.githubusercontent.com/aaemnnosttv/wp-sqlite-db'
 
-# WordPress Command-Line Utility source URL build-time variable
+# Command-Line Utility source URL build-time variable
 ARG CLI_SOURCE_URL='https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar'
 
 ### Users
@@ -164,7 +164,7 @@ COPY 'wordpress-config-template.php' "/tmp/wordpress-config-template.php"
 ## WordPress SQLite Database Integration Plugin (WP-SQLite-DB)
 
 # Download release information for the latest version of WordPress SQLite database integration plugin, parse the version number and assign it to a variable, download the latest version of the plugin to the temporary WordPress content directory, and delete the release information
-RUN wget -O 'wp-sqlite-db-latest.json' "$SQLITE_DB_RELEASE_INFO" && VERSION="$(jq -r '.tag_name' 'wp-sqlite-db-latest.json')" && wget -O "/tmp/$APP/wp-content/db.php" "$SQLITE_DB_SOURCE_URL/$VERSION/src/db.php" && rm 'wp-sqlite-db-latest.json'
+RUN wget -O 'wp-sqlite-db-latest.json' "$SQLITE_DB_RELEASE_INFO_URL" && VERSION="$(jq -r '.tag_name' 'wp-sqlite-db-latest.json')" && wget -O "/tmp/$APP/wp-content/db.php" "$SQLITE_DB_SOURCE_URL/$VERSION/src/db.php" && rm 'wp-sqlite-db-latest.json'
 
 ## WordPress Command-Line Utility (WP-CLI)
 
