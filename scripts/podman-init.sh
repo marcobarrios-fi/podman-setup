@@ -13,33 +13,31 @@ USAGE_INSTRUCTIONS="Usage: $(tput bold)podman-init <GitHub repository name> <Git
 echo "Initializing Podman...";
 
 # The script expects two arguments; the repository name and the repository access token
+# During first execution, the script will save the repository name and access token as environment variables
+# Subsequent executions will use the saved environment variable values
 
-# Verify that the GitHub repository name argument was provided
-if test "$#" -lt 1; then
-  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository name argument was not provided.$(tput sgr0)";
-  echo "$USAGE_INSTRUCTIONS" && exit 1;
+if test -n "${1:-}" && test -n "${2:-}"; then
+  
+  echo "# Podman Initialization Environment Variables" > '/etc/profile.d/podman-init.sh';
+
+  # GitHub repository name
+  GITHUB_REPOSITORY_NAME="$1";
+  echo "export GITHUB_REPOSITORY_NAME=$GITHUB_REPOSITORY_NAME" >> '/etc/profile.d/podman-init.sh';
+
+  # GitHub repository access token
+  GITHUB_REPOSITORY_TOKEN="$2";
+  echo "export GITHUB_REPOSITORY_TOKEN=$GITHUB_REPOSITORY_TOKEN" >> '/etc/profile.d/podman-init.sh';
+
 fi
-
-# Verify that the GitHub repository access token argument was provided
-if test "$#" -lt 2; then
-  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token argument was not provided.$(tput sgr0)";
-  echo "$USAGE_INSTRUCTIONS" && exit 1;
-fi
-
-# GitHub repository name
-GITHUB_REPOSITORY_NAME="$1";
-
-# GitHub repository access token
-GITHUB_REPOSITORY_TOKEN="$2";
 
 # Verify that the repository name is specified
-if test ! -n "${GITHUB_REPOSITORY_NAME:-}"; then
-  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository name is not specified.$(tput sgr0)" && exit 1;
+if test -z "${GITHUB_REPOSITORY_NAME:-}"; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository name is not specified.$(tput sgr0)" && echo "$USAGE_INSTRUCTIONS" && exit 1;
 fi
 
 # Verify that the repository access token is specified
-if test ! -n "${GITHUB_REPOSITORY_TOKEN:-}"; then
-  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token is not specified.$(tput sgr0)" && exit 1;
+if test -z "${GITHUB_REPOSITORY_TOKEN:-}"; then
+  echo "$(tput bold)$(tput setaf 1)Error: GitHub repository access token is not specified.$(tput sgr0)" && echo "$USAGE_INSTRUCTIONS" && exit 1;
 fi
 
 # Create temporary directory
