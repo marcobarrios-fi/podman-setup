@@ -19,6 +19,8 @@ if test -n "$LOG_FILE"; then
   touch "$LOG_FILE";
   # Set log file ownership
   chown "$USER:$GROUP" "$LOG_FILE";
+  # Set log file permissions
+  chmod 700 "$LOG_FILE";
 fi
 
 ### Secrets
