@@ -23,8 +23,8 @@ if test "$LOWERCASE_FILENAMES" = 'yes'; then
       # Convert filename to lowercase
       filename=$(basename "$database_file" | tr '[:upper:]' '[:lower:]');
       if test "$database_file" != "$DATA_DIR/$filename"; then
-        # Rename the file
-        mv -f "$database_file" "$DATA_DIR/$filename";
+        # Rename the file (uses a temporary file to support case-insensitive filesystems)
+        mv -f "$database_file" "$database_file.tmp" && mv -f "$database_file.tmp" "$DATA_DIR/$filename";
       fi
     fi
   done
