@@ -11,6 +11,9 @@
 # Create application directory
 mkdir -p "$APP_DIR";
 
+# Set application directory permissions
+chmod 700 "$APP_DIR";
+
 # Create data directory
 mkdir -p "$DATA_DIR";
 
